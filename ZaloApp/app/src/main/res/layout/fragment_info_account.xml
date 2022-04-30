@@ -5,16 +5,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".InfoAccountActivity"
-    android:weightSum="10">
+    tools:context=".fragment.InfoAccountFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="false"
         android:background="@color/nav_color"
         android:orientation="horizontal"
-        android:paddingTop="5dp"
-        android:layout_weight="1">
+        android:paddingTop="5dp">
 
         <ImageView
             android:id="@+id/home_order"
@@ -37,13 +35,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/layout"
-        android:layout_weight="4">
+        android:id="@+id/layout">
 
         <ImageView
             android:id="@+id/imgCoverImage"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="170dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="centerCrop"
 
@@ -53,11 +50,11 @@
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
 
             android:id="@+id/imgAvt"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_below="@+id/imgCoverImage"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="-110dp"
+            android:layout_marginTop="-100dp"
             android:clickable="true"
             android:elevation="5dp"
             android:scaleType="centerCrop"
@@ -70,8 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_weight="4">
+        android:layout_marginLeft="10dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -167,7 +163,6 @@
         android:text="Đổi thông tin"
         android:textSize="25dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/custom_button"
-        android:layout_weight="1"/>
+        android:layout_marginTop="10dp"
+        android:background="@drawable/custom_button"/>
 </LinearLayout>
