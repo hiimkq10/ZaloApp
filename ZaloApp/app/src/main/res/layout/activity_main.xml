@@ -8,8 +8,9 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@color/black"/>
+        android:background="@drawable/zalo"/>
     <Button
+        android:id="@+id/btnLoginMain"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -20,12 +21,13 @@
         android:layout_marginTop="60dp"/>
 
     <Button
+        android:id="@+id/btnRegisMain"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:background="@drawable/custom_button"
-        android:text="Đăng kí"
+        android:text="Đăng ký"
         android:textSize="30dp" />
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,38 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     app:passwordToggleEnabled="true">
     <LinearLayout
+        android:id="@+id/linnearForgot"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="false"
+        android:layout_height="50dp"
         android:background="@color/nav_color"
-        android:orientation="horizontal"
-        android:paddingTop="5dp">
-
-        <ImageView
-            android:id="@+id/back_main"
-            android:padding="10dp"
-            android:layout_gravity="center"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_baseline_back"/>
-
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
         <TextView
-            android:layout_marginRight="44dp"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đăng nhập"
-            android:textSize="30sp"
-            android:textColor="@color/white"/>
+            android:text="Quên mật khẩu"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            />
+
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,52 +31,60 @@
         android:layout_gravity="center"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="150dp">
+        android:layout_marginTop="100dp">
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
-                android:id="@+id/edtPhone"
+                android:id="@+id/edtPhoneForgotPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:textSize="30sp"
+                android:textSize="30dp"
                 android:hint="Số điện thoại"
                 android:inputType="number"
                 android:drawableStart="@drawable/ic_baseline_phone"
-                android:layout_marginBottom="10dp"
-                tools:ignore="TextFields" />
+                android:layout_marginBottom="30dp"/>
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:passwordToggleEnabled="true">
             <EditText
-                android:id="@+id/edtPass"
+                android:id="@+id/edtPassForgotPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:textSize="30sp"
-                android:hint="Mật khẩu"
+                android:textSize="30dp"
+                android:hint="Mật khẩu mới"
+                android:inputType="textPassword"
+                android:drawableStart="@drawable/ic_baseline_pass"
+                android:layout_marginBottom="30dp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true">
+            <EditText
+                android:id="@+id/edtRePassForgotPass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="30dp"
+                android:hint="Nhập lại mật khẩu"
                 android:inputType="textPassword"
                 android:drawableStart="@drawable/ic_baseline_pass" />
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:id="@+id/txtResetPass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lấy lại mật khẩu"
-            android:textSize="25sp"
-            android:textColor="#5F75F3"
-            android:layout_marginTop="20dp"/>
     </LinearLayout>
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnUpdatePass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button"
-        android:text="Đăng nhập"
-        android:textSize="25sp"
+        android:text="Cập nhật"
+        android:textSize="25dp"
         android:layout_gravity="center"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="30dp"/>
 </LinearLayout>
