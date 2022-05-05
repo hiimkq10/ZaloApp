@@ -1,143 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <androidx.cardview.widget.CardView
+    android:orientation="vertical"
+    android:weightSum="10">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp">
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="false"
+        android:background="@color/nav_color"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/back_main2"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_baseline_back"/>
+
         <TextView
+            android:layout_marginRight="44dp"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:text="Tạo tài khoản"
-            android:textColor="@color/white"
-            android:drawableStart="@drawable/ic_baseline_back"
-            android:textSize="35dp"
-            android:gravity="left|center"
-            android:background="#2196F3"/>
-    </androidx.cardview.widget.CardView>
+            android:layout_height="wrap_content"
+            android:text="Đăng ký tài khoản"
+            android:textSize="30sp"
+            android:textColor="@color/white"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tên Zalo"
-            android:textColor="@color/black"
-            android:textSize="30dp"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="25dp"
-            android:hint="Gồm 2-40 kí tự"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Số điện thoại"
-            android:textColor="@color/black"
-            android:textSize="30dp"
-            android:layout_marginTop="10dp"/>
+        android:layout_marginRight="10dp"
+        android:padding="10dp"
+        android:weightSum="8">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên Zalo"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:layout_marginRight="10dp"/>
             <EditText
-                android:layout_width="300dp"
+                android:id="@+id/edtName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:textSize="25dp"
+                android:textSize="25sp"
+                android:hint="Gồm 2-40 kí tự"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Số điện thoại"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:id="@+id/edtPhoneRegis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="25sp"
                 android:hint="Nhập số điện thoại"
                 android:inputType="number"
-                android:layout_marginRight="20dp"/>
-            <Button
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_baseline_check_sdt"/>
+                tools:ignore="TextFields" />
         </LinearLayout>
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Giới tính"
-            android:textSize="30dp"
-            android:textColor="@color/black"
-            android:layout_marginTop="10dp"/>
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="40dp">
-            <RadioButton
-                android:layout_width="100dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nam"
-                android:textSize="25dp"
-                android:layout_marginRight="60dp"/>
+                android:text="Giới tính"
+                android:textSize="30sp"
+                android:textColor="@color/black"/>
 
-            <RadioButton
-                android:layout_width="100dp"
+            <RadioGroup
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nữ"
-                android:textSize="25dp"/>
-        </RadioGroup>
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp">
+                <RadioButton
+                    android:id="@+id/rbtnMale"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Nam"
+                    android:textSize="30sp"
+                    android:layout_marginRight="50dp"/>
+
+                <RadioButton
+                    android:id="@+id/rbtnFemale"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Nữ"
+                    android:textSize="30sp"/>
+            </RadioGroup>
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ngày sinh"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <EditText
-                android:id="@+id/date"
-                android:layout_width="250dp"
+                android:id="@+id/edtBirth"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="01/01/2000"
-                android:textSize="25dp"
-                android:layout_marginRight="30dp"/>
-            <Button
-                android:id="@+id/calendar"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_baseline_calendar"/>
-        </LinearLayout>
+                android:textSize="25sp"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mật khẩu"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp"/>
         <EditText
+            android:id="@+id/edtPassRegis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Mật khẩu"
-            android:textSize="25dp"/>
+            android:textSize="25sp"/>
         <EditText
+            android:id="@+id/edtRePassRegis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nhập lại mật khẩu"
-            android:textSize="25dp"
-            android:layout_marginTop="10dp"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/custom_button"
-            android:text="Đăng ký"
-            android:textSize="25dp"
-            android:layout_gravity="center"
+            android:textSize="25sp"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
-
+    <Button
+        android:id="@+id/btnRegis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_button"
+        android:text="Đăng ký"
+        android:textSize="25sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        />
 </LinearLayout>
