@@ -1,6 +1,9 @@
 package hcmute.nhom2.zaloapp.model;
 
-public class Contact {
+import java.io.Serializable;
+import java.util.Date;
+
+public class Contact implements Serializable {
     private String phone;
     private String name;
     private boolean active;
@@ -48,4 +51,5 @@ public class Contact {
     public void setImage(String image) {
         this.image = image;
     }
+
 }

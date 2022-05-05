@@ -4,4 +4,5 @@
     <string name="menu_search">Search</string>
     <string name="menu_message">Chats</string>
     <string name="menu_contact">Contacts</string>
+    <string name="type_a_message">type a message...</string>
 </resources>

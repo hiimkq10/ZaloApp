@@ -24,7 +24,7 @@
                 android:layout_height="40dp"
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/circle"
-                android:src="@drawable/anh34"
+                android:background="@android:color/darker_gray"
                 />
 
             <TextView
@@ -42,13 +42,27 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/my_bottom_navigation"

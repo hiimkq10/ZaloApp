@@ -2,38 +2,33 @@ package hcmute.nhom2.zaloapp.model;
 
 import java.util.Date;
 
-public class Chat {
-    private String name;
-    private String newestChat;
+public class Chat extends Contact {
+    private String latestChat;
     private Date timestamp;
     private Boolean read;
-    private int image;
 
     public Chat() {
     }
 
-    public Chat(String name, String newestChat, Date timestamp, Boolean read, int image) {
-        this.name = name;
-        this.newestChat = newestChat;
+    public Chat(String latestChat, Date timestamp, Boolean read) {
+        this.latestChat = latestChat;
         this.timestamp = timestamp;
         this.read = read;
-        this.image = image;
     }
 
-    public String getName() {
-        return name;
+    public Chat(String phone, String name, boolean active, String image, String latestChat, Date timestamp, Boolean read) {
+        super(phone, name, active, image);
+        this.latestChat = latestChat;
+        this.timestamp = timestamp;
+        this.read = read;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLatestChat() {
+        return latestChat;
     }
 
-    public String getNewestChat() {
-        return newestChat;
-    }
-
-    public void setNewestChat(String newestChat) {
-        this.newestChat = newestChat;
+    public void setLatestChat(String latestChat) {
+        this.latestChat = latestChat;
     }
 
     public Date getTimestamp() {
@@ -50,13 +45,5 @@ public class Chat {
 
     public void setRead(Boolean read) {
         this.read = read;
-    }
-
-    public int getImage() {
-        return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
     }
 }

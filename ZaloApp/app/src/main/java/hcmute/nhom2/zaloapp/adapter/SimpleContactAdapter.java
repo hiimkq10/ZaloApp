@@ -2,8 +2,6 @@ package hcmute.nhom2.zaloapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,97 +20,68 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
 import hcmute.nhom2.zaloapp.ChatActivity;
 import hcmute.nhom2.zaloapp.R;
-import hcmute.nhom2.zaloapp.model.Chat;
+import hcmute.nhom2.zaloapp.model.Contact;
 import hcmute.nhom2.zaloapp.utilities.Constants;
 import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 
-public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder>{
-    private final LinkedList<Chat> chats;
+public class SimpleContactAdapter extends RecyclerView.Adapter<SimpleContactAdapter.SimpleContactViewHolder> {
+    private final LinkedList<Contact> contacts;
     private LayoutInflater mInflater;
+    private Context context;
     private FirebaseFirestore db;
     private FirebaseStorage firebaseStorage;
-    private Context context;
     private PreferenceManager preferenceManager;
 
-    public ChatListAdapter(Context context, LinkedList<Chat> chatList) {
+    public SimpleContactAdapter(Context context, LinkedList<Contact> contacts) {
+        this.mInflater = LayoutInflater.from(context);
+        this.contacts = contacts;
         this.context = context;
-        mInflater = LayoutInflater.from(context);
-        this.chats = chatList;
         this.firebaseStorage = FirebaseStorage.getInstance();
         this.db = FirebaseFirestore.getInstance();
         this.preferenceManager = new PreferenceManager(context);
     }
 
-    class ChatViewHolder extends RecyclerView.ViewHolder {
-        public final TextView name, message, timestamp;
-        public final ImageView image, active;
-        final ChatListAdapter adapter;
+    class SimpleContactViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView image, active;
+        public final TextView name;
+        private final SimpleContactAdapter adapter;
 
-        public ChatViewHolder(@NonNull View itemView, ChatListAdapter adapter) {
+        public SimpleContactViewHolder(@NonNull View itemView, SimpleContactAdapter adapter) {
             super(itemView);
-            this.name = itemView.findViewById(R.id.userName);
-            this.message = itemView.findViewById(R.id.userMessage);
-            this.timestamp = itemView.findViewById(R.id.userTimestamp);
-            this.image = itemView.findViewById(R.id.userImage);
-            this.active = itemView.findViewById(R.id.userActive);
+            this.image = itemView.findViewById(R.id.userContactImage);
+            this.active = itemView.findViewById(R.id.userContactActive);
+            this.name = itemView.findViewById(R.id.userContactName);
             this.adapter = adapter;
         }
     }
 
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View mItemView = mInflater.inflate(R.layout.chat_item, parent, false);
-        return new ChatViewHolder(mItemView, this);
+    public SimpleContactAdapter.SimpleContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View mItemView = mInflater.inflate(R.layout.simple_contact_item, parent, false);
+        return new SimpleContactAdapter.SimpleContactViewHolder(mItemView, this);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        Chat mCurrent = this.chats.get(position);
+    public void onBindViewHolder(@NonNull SimpleContactAdapter.SimpleContactViewHolder holder, int position) {
+        Contact mCurrent = this.contacts.get(position);
         holder.name.setText(mCurrent.getName());
-        holder.message.setText(mCurrent.getLatestChat());
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
-        holder.timestamp.setText(formatter.format(mCurrent.getTimestamp()));
-
-        if (mCurrent.getRead() != null && !mCurrent.getRead()) {
-            holder.name.setTypeface(Typeface.DEFAULT_BOLD);
-            holder.message.setTypeface(Typeface.DEFAULT_BOLD);
-            holder.message.setTextColor(context.getResources().getColor(R.color.black));
-            holder.timestamp.setTypeface(Typeface.DEFAULT_BOLD);
-            holder.timestamp.setTextColor(context.getResources().getColor(R.color.black));
-        }
-        else {
-            holder.name.setTypeface(Typeface.DEFAULT);
-            holder.message.setTypeface(Typeface.DEFAULT);
-            holder.message.setTextColor(context.getResources().getColor(android.R.color.tab_indicator_text));
-            holder.timestamp.setTypeface(Typeface.DEFAULT);
-            holder.timestamp.setTextColor(context.getResources().getColor(android.R.color.tab_indicator_text));
-        }
-        if (mCurrent.getImage() != null) {
-            StorageReference storageReference = firebaseStorage.getReference()
-                    .child(Constants.KEY_COLLECTION_USERS)
-                    .child(Constants.KEY_STORAGE_FOLDER_UserImages)
-                    .child(mCurrent.getImage());
-            Glide.with(holder.itemView.getContext()).load(storageReference).into(holder.image);
-        }
-
-        if (!mCurrent.isActive()) {
-            holder.active.setVisibility(View.INVISIBLE);
-        }
-        else {
-            holder.active.setVisibility(View.VISIBLE);
-        }
+        StorageReference storageReference = firebaseStorage.getReference()
+                .child(Constants.KEY_COLLECTION_USERS)
+                .child(Constants.KEY_STORAGE_FOLDER_UserImages)
+                .child(mCurrent.getImage());
+        Glide.with(holder.itemView.getContext()).load(storageReference).into(holder.image);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra(Constants.KEY_User, mCurrent);
+
                 final String flag;
                 if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(mCurrent.getPhone()) < 0) {
                     flag = preferenceManager.getString(Constants.KEY_PhoneNum) + "_" + mCurrent.getPhone();
@@ -147,6 +116,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
     @Override
     public int getItemCount() {
-        return chats.size();
+        return contacts.size();
     }
 }
