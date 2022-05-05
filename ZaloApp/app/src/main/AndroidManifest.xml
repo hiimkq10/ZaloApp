@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZaloApp">
         <activity
+            android:name=".ReceiverInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ListChatAndContactActivity"
             android:exported="false" />
         <activity

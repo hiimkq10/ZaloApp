@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="nav_color">#0A7CFF</color>
     <color name="status_bar_color">#204DFF</color>
+    <color name="background_chat_input">#e5e6e9</color>
+    <color name="background_message">#35118D</color>
 </resources>
