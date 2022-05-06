@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         String phone = preferenceManager.getString("PhoneNum");
         if( phone != null){
             SaveUser(phone);
-            Intent home = new Intent(MainActivity.this, AccountSettingActivity.class);
+            Intent home = new Intent(MainActivity.this, ListChatAndContactActivity.class);
             startActivity(home);
         }
     }
