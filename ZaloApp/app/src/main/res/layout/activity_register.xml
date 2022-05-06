@@ -50,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tên Zalo"
+                android:text="Tên Zalo:"
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 android:layout_marginRight="10dp"/>
@@ -70,7 +70,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Số điện thoại"
+                android:text="Số điện thoại:"
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 android:layout_marginTop="10dp"/>
@@ -91,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Giới tính"
+                android:text="Giới tính:"
                 android:textSize="30sp"
                 android:textColor="@color/black"/>
 
@@ -99,27 +99,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="10dp">
+                android:layout_marginLeft="10dp"
+                android:weightSum="2">
                 <RadioButton
                     android:id="@+id/rbtnMale"
-                    android:layout_width="100dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:text="Nam"
                     android:textSize="30sp"
-                    android:layout_marginRight="50dp"/>
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"/>
 
                 <RadioButton
                     android:id="@+id/rbtnFemale"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Nữ"
-                    android:textSize="30sp"/>
+                    android:textSize="30sp"
+                    android:layout_weight="1"/>
             </RadioGroup>
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ngày sinh"
+            android:text="Ngày sinh:"
             android:textSize="30sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp"/>
@@ -132,7 +135,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mật khẩu"
+            android:text="Mật khẩu:"
             android:textSize="30sp"
             android:textColor="@color/black"
             android:layout_marginTop="10dp"/>

@@ -45,7 +45,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
     EditText edtNameEdit, edtBirthEdit;
     RadioButton rbtnMaleEdit, rbtnFeMaleEdit;
     CircleImageView imgAvtEdit;
-    ImageView imgCoverImageEdit;
+    ImageView imgCoverImageEdit, back;
     Button btnUpdate;
     PreferenceManager preferenceManager;
     FirebaseFirestore db ;
@@ -106,6 +106,13 @@ public class UpdateAccountActivity extends AppCompatActivity {
                 updateAccount();
             }
         });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
     @Override
     protected void onStart() {
@@ -138,7 +145,11 @@ public class UpdateAccountActivity extends AppCompatActivity {
                             }else {
                                 loadImage(image, imgAvtEdit);
                             }
-                            loadImage(coverImage, imgCoverImageEdit);
+                            if(imageUriBg != null){
+                                imgCoverImageEdit.setImageURI(imageUriBg);
+                            }else {
+                                loadImage(coverImage, imgCoverImageEdit);
+                            }
 
                         }else{
                             Toast.makeText(UpdateAccountActivity.this, "Không tồn tại thông tin", Toast.LENGTH_SHORT).show();
@@ -160,6 +171,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
         btnUpdate = findViewById(R.id.btnUpdate);
         imgAvtEdit = findViewById(R.id.imgAvtEdit);
         imgCoverImageEdit = findViewById(R.id.imgCoverImageEdit);
+        back = findViewById(R.id.back_setting2);
     }
 
     private void updateAccount(){

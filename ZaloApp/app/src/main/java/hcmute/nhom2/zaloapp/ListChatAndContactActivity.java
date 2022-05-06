@@ -5,6 +5,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,9 +47,9 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         setContentView(R.layout.activity_list_chat_and_contact);
 
         preferenceManager = new PreferenceManager(ListChatAndContactActivity.this);
-        preferenceManager.putString(Constants.KEY_Image, "avatar.png");
-        preferenceManager.putString(Constants.KEY_PhoneNum, "0123456789");
-        preferenceManager.putString(Constants.KEY_Name, "Quang");
+//        preferenceManager.putString(Constants.KEY_Image, "avatar.png");
+//        preferenceManager.putString(Constants.KEY_PhoneNum, "0123456789");
+//        preferenceManager.putString(Constants.KEY_Name, "Quang");
 //        preferenceManager.putString(Constants.KEY_PhoneNum, "1123456789");
 //        preferenceManager.putString(Constants.KEY_Name, "Thanh Hai");
 
@@ -76,6 +78,14 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         GlideApp.with(ListChatAndContactActivity.this)
                 .load(storageReference)
                 .into(tbUserImage);
+
+        tbUserImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent account = new Intent(ListChatAndContactActivity.this, AccountSettingActivity.class);
+                startActivity(account);
+            }
+        });
 
     }
 
