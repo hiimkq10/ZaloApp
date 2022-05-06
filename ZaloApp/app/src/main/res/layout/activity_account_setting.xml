@@ -32,7 +32,7 @@
         <TextView
             android:id="@+id/infoAccount"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:drawableLeft="@drawable/ic_profile"
             android:drawableTint="@color/black"
             android:drawablePadding="10dp"
@@ -50,7 +50,7 @@
         <TextView
             android:id="@+id/editAccount"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:drawableLeft="@drawable/ic_edit_profile"
             android:drawableTint="@color/black"
             android:drawablePadding="10dp"
@@ -68,7 +68,7 @@
         <TextView
             android:id="@+id/logout"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:drawableLeft="@drawable/ic_logout_exit"
             android:drawableTint="@color/black"
             android:drawablePadding="10dp"

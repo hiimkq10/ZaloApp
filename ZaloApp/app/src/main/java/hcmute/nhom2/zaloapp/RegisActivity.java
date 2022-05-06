@@ -104,8 +104,8 @@ public class RegisActivity extends AppCompatActivity {
                             reg_entry.put("Gender", "Male");
                         }
                         reg_entry.put("Birth", edtBirth.getText().toString());
-                        reg_entry.put("Image", "https://firebasestorage.googleapis.com/v0/b/zaloapp-b934f.appspot.com/o/Users%2FUserImages%2Favt.jpg?alt=media&token=04d60e06-3432-405a-a9f0-80221ac59f62");
-                        reg_entry.put("CoverImage", "https://firebasestorage.googleapis.com/v0/b/zaloapp-b934f.appspot.com/o/Users%2FUserImages%2Fbg.jpg?alt=media&token=d9bf924a-a368-4139-92c6-a123abfba428");
+                        reg_entry.put("Image", "avt.jpg");
+                        reg_entry.put("CoverImage", "bg.jpg");
                         reg_entry.put("Active",false);
 
                         db.collection("Users").document(edtPhoneRegis.getText().toString())

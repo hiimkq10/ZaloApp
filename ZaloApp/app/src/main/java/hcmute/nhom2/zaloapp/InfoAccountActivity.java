@@ -30,7 +30,7 @@ public class InfoAccountActivity extends AppCompatActivity {
     Button btnUpdateInfo;
     TextView txtName, txtGender, txtBirth, txtPhone;
     CircleImageView imgAvt;
-    ImageView imgCoverImage;
+    ImageView imgCoverImage, back;
     FirebaseFirestore db;
     FirebaseStorage storage;
     PreferenceManager preferenceManager;
@@ -52,6 +52,13 @@ public class InfoAccountActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent update = new Intent(InfoAccountActivity.this, UpdateAccountActivity.class);
                 startActivity(update);
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 
@@ -80,7 +87,12 @@ public class InfoAccountActivity extends AppCompatActivity {
                     loadImage(coverImage, imgCoverImage);
                     txtName.setText(name);
                     txtBirth.setText(birth);
-                    txtGender.setText(gender);
+                    if(gender.equals("Female")){
+                        txtGender.setText("Nữ");
+                    }else{
+                        txtGender.setText("Nam");
+                    }
+
                     txtPhone.setText(PhoneNum);
                 }else{
                     Toast.makeText(InfoAccountActivity.this, "Không tồn tại thông tin", Toast.LENGTH_SHORT).show();
@@ -103,6 +115,7 @@ public class InfoAccountActivity extends AppCompatActivity {
         txtPhone = findViewById(R.id.txtPhone);
         imgAvt = findViewById(R.id.imgAvt);
         imgCoverImage = findViewById(R.id.imgCoverImage);
+        back = findViewById(R.id.back_setting1);
     }
 
     private void loadImage(String imageName, ImageView imageView){
