@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import hcmute.nhom2.zaloapp.utilities.Constants;
+
 public class RegisActivity extends AppCompatActivity {
 
     EditText edtName, edtPhoneRegis, edtBirth, edtPassRegis, edtRePassRegis;
@@ -86,7 +88,7 @@ public class RegisActivity extends AppCompatActivity {
             Toast.makeText(RegisActivity.this, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show();
 
         }else{
-            db.collection("Users").document(edtPhoneRegis.getText().toString())
+            db.collection(Constants.KEY_COLLECTION_USERS).document(edtPhoneRegis.getText().toString())
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -96,19 +98,19 @@ public class RegisActivity extends AppCompatActivity {
                     }else {
 
                         Map<String, Object> reg_entry = new HashMap<>();
-                        reg_entry.put("Name", edtName.getText().toString());
+                        reg_entry.put(Constants.KEY_Name, edtName.getText().toString());
                         if(rbtnFeMale.isChecked()){
-                            reg_entry.put("Gender", "Female");
+                            reg_entry.put(Constants.KEY_Gender, "Female");
                         }
                         else{
-                            reg_entry.put("Gender", "Male");
+                            reg_entry.put(Constants.KEY_Gender, "Male");
                         }
-                        reg_entry.put("Birth", edtBirth.getText().toString());
-                        reg_entry.put("Image", "avt.jpg");
-                        reg_entry.put("CoverImage", "bg.jpg");
-                        reg_entry.put("Active",false);
+                        reg_entry.put(Constants.KEY_Birth, edtBirth.getText().toString());
+                        reg_entry.put(Constants.KEY_Image, "avt.jpg");
+                        reg_entry.put(Constants.KEY_CoverImage, "bg.jpg");
+                        reg_entry.put(Constants.KEY_Active,false);
 
-                        db.collection("Users").document(edtPhoneRegis.getText().toString())
+                        db.collection(Constants.KEY_COLLECTION_USERS).document(edtPhoneRegis.getText().toString())
                                 .set(reg_entry).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -125,9 +127,9 @@ public class RegisActivity extends AppCompatActivity {
                                 });
 
                         Map<String, Object> data = new HashMap<>();
-                        data.put("Password", edtPassRegis.getText().toString());
-                        db.collection("Users").document(edtPhoneRegis.getText().toString())
-                                .collection("PrivateData").document(edtPhoneRegis.getText().toString())
+                        data.put(Constants.KEY_Password, edtPassRegis.getText().toString());
+                        db.collection(Constants.KEY_COLLECTION_USERS).document(edtPhoneRegis.getText().toString())
+                                .collection(Constants.KEY_SUB_COLLECTION_PrivateData).document(edtPhoneRegis.getText().toString())
                                 .set(data);
 
                     }

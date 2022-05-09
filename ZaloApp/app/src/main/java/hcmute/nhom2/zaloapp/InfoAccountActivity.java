@@ -69,7 +69,7 @@ public class InfoAccountActivity extends AppCompatActivity {
         super.onStart();
         String PhoneNum = preferenceManager.getString("PhoneNum");
 
-        db.collection("Users").document(PhoneNum)
+        db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task< DocumentSnapshot > task) {
@@ -77,11 +77,11 @@ public class InfoAccountActivity extends AppCompatActivity {
                     DocumentSnapshot doc = task.getResult();
 
                     assert doc != null;
-                    String name = doc.getString("Name");
-                    String gender = doc.getString("Gender");
-                    String birth = doc.getString("Birth");
-                    String image = doc.getString("Image");
-                    String coverImage = doc.getString("CoverImage");
+                    String name = doc.getString(Constants.KEY_Name);
+                    String gender = doc.getString(Constants.KEY_Gender);
+                    String birth = doc.getString(Constants.KEY_Birth);
+                    String image = doc.getString(Constants.KEY_Image);
+                    String coverImage = doc.getString(Constants.KEY_CoverImage);
 
                     loadImage(image, imgAvt);
                     loadImage(coverImage, imgCoverImage);

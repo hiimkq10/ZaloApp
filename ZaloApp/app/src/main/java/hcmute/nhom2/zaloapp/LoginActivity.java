@@ -23,8 +23,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import hcmute.nhom2.zaloapp.utilities.Constants;
 import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 
 
@@ -84,18 +86,17 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
         }
 
-        db.collection("Users").document(edtPhone.getText().toString())
-                .collection("PrivateData")
+        db.collection(Constants.KEY_COLLECTION_USERS).document(edtPhone.getText().toString())
+                .collection(Constants.KEY_SUB_COLLECTION_PrivateData)
                 .document(edtPhone.getText().toString())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    String b = doc.getString("Password");
+                    String b = doc.getString(Constants.KEY_Password);
                     String b1 = edtPass.getText().toString().trim();
-                    assert b != null;
-                    if ( b.equalsIgnoreCase(b1)) {
+                    if (Objects.equals(b, b1)) {
 
                         updateActive(edtPhone.getText().toString());
                         SaveUser(edtPhone.getText().toString());
@@ -110,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void SaveUser(String PhoneNum){
 
-        db.collection("Users").document(PhoneNum)
+        db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task< DocumentSnapshot > task) {
@@ -118,8 +119,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.getResult().exists()) {
                     DocumentSnapshot doc = task.getResult();
                     assert doc != null;
-                    String name = doc.getString("Name");
-                    String image = doc.getString("Image");
+                    String name = doc.getString(Constants.KEY_Name);
+                    String image = doc.getString(Constants.KEY_Image);
                     List<String> listFriends = (List<String>) doc.get("ListFriends");
 
                     Set<String> friends = new HashSet<String>();
@@ -142,12 +143,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     private void updateActive(String PhoneNum){
-        db.collection("Users").document(PhoneNum).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Map<String, Object> data = new HashMap<>();
-                data.put("Active", true);
-                db.collection("Users").document(PhoneNum).update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                data.put(Constants.KEY_Active, true);
+                db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum).update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
 
