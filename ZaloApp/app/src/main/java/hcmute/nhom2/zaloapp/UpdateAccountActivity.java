@@ -25,14 +25,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -45,7 +51,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
     EditText edtNameEdit, edtBirthEdit;
     RadioButton rbtnMaleEdit, rbtnFeMaleEdit;
     CircleImageView imgAvtEdit;
-    ImageView imgCoverImageEdit;
+    ImageView imgCoverImageEdit, back;
     Button btnUpdate;
     PreferenceManager preferenceManager;
     FirebaseFirestore db ;
@@ -106,6 +112,13 @@ public class UpdateAccountActivity extends AppCompatActivity {
                 updateAccount();
             }
         });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
     @Override
     protected void onStart() {
@@ -138,7 +151,11 @@ public class UpdateAccountActivity extends AppCompatActivity {
                             }else {
                                 loadImage(image, imgAvtEdit);
                             }
-                            loadImage(coverImage, imgCoverImageEdit);
+                            if(imageUriBg != null){
+                                imgCoverImageEdit.setImageURI(imageUriBg);
+                            }else {
+                                loadImage(coverImage, imgCoverImageEdit);
+                            }
 
                         }else{
                             Toast.makeText(UpdateAccountActivity.this, "Không tồn tại thông tin", Toast.LENGTH_SHORT).show();
@@ -160,6 +177,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
         btnUpdate = findViewById(R.id.btnUpdate);
         imgAvtEdit = findViewById(R.id.imgAvtEdit);
         imgCoverImageEdit = findViewById(R.id.imgCoverImageEdit);
+        back = findViewById(R.id.back_setting2);
     }
 
     private void updateAccount(){
@@ -194,6 +212,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
                             .update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
+                                updateNameAnywhere(PhoneNum,edtNameEdit.getText().toString());
                                 Toast.makeText(UpdateAccountActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                                 Intent info = new Intent(UpdateAccountActivity.this, AccountSettingActivity.class);
                                 startActivity(info);
@@ -228,6 +247,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
                         Map<String, Object> data = new HashMap<>();
                         data.put(imageType, filename);
                         db.collection("Users").document(PhoneNum).update(data);
+                        updateImageAnywhere(PhoneNum,filename);
 
                         Toast.makeText(UpdateAccountActivity.this,"Đổi ảnh thành công", Toast.LENGTH_SHORT).show();
                         imgAvtEdit.setImageResource(R.drawable.anh1);
@@ -269,7 +289,34 @@ public class UpdateAccountActivity extends AppCompatActivity {
             }
         });
     }
-    private void updateImageAnywhere(String PhoneNum, String fileName){
-        String var = "Users." + PhoneNum + ".Image";
+    private void updateImageAnywhere(String PhoneNum, String fileName) {
+        db.collection(Constants.KEY_Rooms)
+                .orderBy(Constants.KEY_COLLECTION_USERS + "." + PhoneNum).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        DocumentReference documentReference = document.getReference();
+                        documentReference.update(Constants.KEY_COLLECTION_USERS + "." + PhoneNum + ".Image", fileName);
+
+                    }
+                }
+            }
+        });
+    }
+    private void updateNameAnywhere(String PhoneNum, String newName) {
+        db.collection(Constants.KEY_Rooms)
+                .orderBy(Constants.KEY_COLLECTION_USERS + "." + PhoneNum).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        DocumentReference documentReference = document.getReference();
+                            documentReference.update(Constants.KEY_COLLECTION_USERS + "." + PhoneNum + ".Name", newName);
+
+                    }
+                }
+            }
+        });
     }
 }

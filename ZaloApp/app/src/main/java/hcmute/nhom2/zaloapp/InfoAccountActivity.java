@@ -30,7 +30,7 @@ public class InfoAccountActivity extends AppCompatActivity {
     Button btnUpdateInfo;
     TextView txtName, txtGender, txtBirth, txtPhone;
     CircleImageView imgAvt;
-    ImageView imgCoverImage;
+    ImageView imgCoverImage, back;
     FirebaseFirestore db;
     FirebaseStorage storage;
     PreferenceManager preferenceManager;
@@ -55,6 +55,13 @@ public class InfoAccountActivity extends AppCompatActivity {
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
     }
 
     @Override
@@ -62,7 +69,7 @@ public class InfoAccountActivity extends AppCompatActivity {
         super.onStart();
         String PhoneNum = preferenceManager.getString("PhoneNum");
 
-        db.collection("Users").document(PhoneNum)
+        db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task< DocumentSnapshot > task) {
@@ -70,17 +77,22 @@ public class InfoAccountActivity extends AppCompatActivity {
                     DocumentSnapshot doc = task.getResult();
 
                     assert doc != null;
-                    String name = doc.getString("Name");
-                    String gender = doc.getString("Gender");
-                    String birth = doc.getString("Birth");
-                    String image = doc.getString("Image");
-                    String coverImage = doc.getString("CoverImage");
+                    String name = doc.getString(Constants.KEY_Name);
+                    String gender = doc.getString(Constants.KEY_Gender);
+                    String birth = doc.getString(Constants.KEY_Birth);
+                    String image = doc.getString(Constants.KEY_Image);
+                    String coverImage = doc.getString(Constants.KEY_CoverImage);
 
                     loadImage(image, imgAvt);
                     loadImage(coverImage, imgCoverImage);
                     txtName.setText(name);
                     txtBirth.setText(birth);
-                    txtGender.setText(gender);
+                    if(gender.equals("Female")){
+                        txtGender.setText("Nữ");
+                    }else{
+                        txtGender.setText("Nam");
+                    }
+
                     txtPhone.setText(PhoneNum);
                 }else{
                     Toast.makeText(InfoAccountActivity.this, "Không tồn tại thông tin", Toast.LENGTH_SHORT).show();
@@ -103,6 +115,7 @@ public class InfoAccountActivity extends AppCompatActivity {
         txtPhone = findViewById(R.id.txtPhone);
         imgAvt = findViewById(R.id.imgAvt);
         imgCoverImage = findViewById(R.id.imgCoverImage);
+        back = findViewById(R.id.back_setting1);
     }
 
     private void loadImage(String imageName, ImageView imageView){

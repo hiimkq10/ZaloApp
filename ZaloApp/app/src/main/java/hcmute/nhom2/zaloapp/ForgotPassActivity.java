@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import hcmute.nhom2.zaloapp.utilities.Constants;
+
 public class ForgotPassActivity extends AppCompatActivity {
     EditText edtPhone, edtPass, edtRePass;
     Button btnUpdatePass;
@@ -50,10 +52,10 @@ public class ForgotPassActivity extends AppCompatActivity {
 
                 }else{
                     Map<String, Object> data = new HashMap<>();
-                    data.put("Password", edtPass.getText().toString());
+                    data.put(Constants.KEY_Password, edtPass.getText().toString());
 
-                    db.collection("Users").document(edtPhone.getText().toString())
-                            .collection("PrivateData").document(edtPhone.getText().toString())
+                    db.collection(Constants.KEY_COLLECTION_USERS).document(edtPhone.getText().toString())
+                            .collection(Constants.KEY_SUB_COLLECTION_PrivateData).document(edtPhone.getText().toString())
                             .update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {

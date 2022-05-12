@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import hcmute.nhom2.zaloapp.utilities.Constants;
 import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 
 public class AccountSettingActivity extends AppCompatActivity {
@@ -77,12 +78,12 @@ public class AccountSettingActivity extends AppCompatActivity {
                 .show();
     }
     private void updateActive(String PhoneNum){
-        db.collection("Users").document(PhoneNum).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Map<String, Object> data = new HashMap<>();
-                data.put("Active", false);
-                db.collection("Users").document(PhoneNum).update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                data.put(Constants.KEY_Active, false);
+                db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum).update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
 
