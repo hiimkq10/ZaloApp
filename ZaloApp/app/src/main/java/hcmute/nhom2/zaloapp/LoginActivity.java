@@ -102,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
                         SaveUser(edtPhone.getText().toString());
 
                         Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-
                     } else
                         Toast.makeText(LoginActivity.this, "Lỗi đăng nhập. Mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
                 }

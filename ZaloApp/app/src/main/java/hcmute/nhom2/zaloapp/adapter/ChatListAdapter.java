@@ -23,13 +23,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import hcmute.nhom2.zaloapp.ChatActivity;
 import hcmute.nhom2.zaloapp.R;
 import hcmute.nhom2.zaloapp.model.Chat;
 import hcmute.nhom2.zaloapp.utilities.Constants;
 import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
+import hcmute.nhom2.zaloapp.utilities.Utils;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder>{
     private final LinkedList<Chat> chats;
@@ -76,8 +80,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         Chat mCurrent = this.chats.get(position);
         holder.name.setText(mCurrent.getName());
         holder.message.setText(mCurrent.getLatestChat());
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
-        holder.timestamp.setText(formatter.format(mCurrent.getTimestamp()));
+        holder.timestamp.setText(getReadableDateTime(mCurrent.getTimestamp()));
 
         if (mCurrent.getRead() != null && !mCurrent.getRead()) {
             holder.name.setTypeface(Typeface.DEFAULT_BOLD);
@@ -148,5 +151,25 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @Override
     public int getItemCount() {
         return chats.size();
+    }
+
+    private String getReadableDateTime(Date date) {
+        Date now = new Date();
+        SimpleDateFormat simpleDateFormat;
+        long different = Utils.getDateDiffInSecond(date, now);
+
+        long daysInSecond = 60 * 60 * 24;
+        long elapsedDays = different / daysInSecond;
+
+        if (elapsedDays > 5) {
+            simpleDateFormat = new SimpleDateFormat("MMM d", Locale.getDefault());
+        }
+        else if (elapsedDays >= 1) {
+            simpleDateFormat = new SimpleDateFormat("E", Locale.getDefault());
+        }
+        else {
+            simpleDateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
+        }
+        return simpleDateFormat.format(date);
     }
 }

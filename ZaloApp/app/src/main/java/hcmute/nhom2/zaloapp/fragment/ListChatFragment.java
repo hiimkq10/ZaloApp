@@ -21,10 +21,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import hcmute.nhom2.zaloapp.ConcreteBuilder.ChatConcreteBuilder;
 import hcmute.nhom2.zaloapp.Loading;
 import hcmute.nhom2.zaloapp.R;
 import hcmute.nhom2.zaloapp.adapter.ChatListAdapter;
 import hcmute.nhom2.zaloapp.adapter.SimpleContactAdapter;
+import hcmute.nhom2.zaloapp.builder.ChatBuilder;
 import hcmute.nhom2.zaloapp.model.Chat;
 import hcmute.nhom2.zaloapp.model.Contact;
 import hcmute.nhom2.zaloapp.utilities.Constants;
@@ -92,38 +94,37 @@ public class ListChatFragment extends Fragment {
         if (value != null) {
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 HashMap<String, Object> user = (HashMap<String, Object>) documentChange.getDocument().getData().get(Constants.KEY_COLLECTION_USERS);
-
-                Chat chat = new Chat();
+                ChatBuilder chatBuilder = new ChatConcreteBuilder();
                 for (String key : user.keySet()) {
                     if (key.equals(preferenceManager.getString(Constants.KEY_PhoneNum))) {
                         HashMap<String, Object> sender = (HashMap<String, Object>) user.get(key);
-                        chat.setRead((Boolean) sender.get(Constants.KEY_Read));
+                        chatBuilder = chatBuilder.setRead((Boolean) sender.get(Constants.KEY_Read));
                     }
                     else {
-                        chat.setPhone(key);
+                        chatBuilder = chatBuilder.setPhone(key);
                         HashMap<String, Object> receiver = (HashMap<String, Object>) user.get(key);
-                        chat.setName((String) receiver.get(Constants.KEY_Name));
-                        chat.setImage((String) receiver.get(Constants.KEY_Image));
-                        chat.setActive((Boolean) receiver.get(Constants.KEY_Active));
+                        chatBuilder = chatBuilder.setName((String) receiver.get(Constants.KEY_Name));
+                        chatBuilder = chatBuilder.setImage((String) receiver.get(Constants.KEY_Image));
+                        chatBuilder = chatBuilder.setActive((Boolean) receiver.get(Constants.KEY_Active));
                     }
                 }
                 HashMap<String, Object> latestChat = (HashMap<String, Object>) documentChange.getDocument().getData().get(Constants.KEY_LatestChat);
-                chat.setLatestChat(String.valueOf(latestChat.get(Constants.KEY_Content)));
+                chatBuilder = chatBuilder.setLatestChat(String.valueOf(latestChat.get(Constants.KEY_Content)));
                 Timestamp timestamp = (Timestamp) latestChat.get(Constants.KEY_Timestamp);
-                chat.setTimestamp(timestamp.toDate());
-
+                chatBuilder = chatBuilder.setTimestamp(timestamp.toDate());
+                Chat chat = chatBuilder.build();
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     this.chats.add(chat);
                 }
                 if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
-                    int position = -1;
                     for (int i = 0; i < chats.size(); i++) {
                         if (user.containsKey(chats.get(i).getPhone())) {
-                            position = i;
-                            break;
+                            if (!chats.get(i).getLatestChat().equals(chat.getLatestChat()) || chats.get(i).getRead() != chat.getRead()) {
+                                this.chats.set(i, chat);
+                                break;
+                            }
                         }
                     }
-                    this.chats.set(position, chat);
                 }
             }
             Collections.sort(this.chats, (obj1, obj2) -> obj2.getTimestamp().compareTo(obj1.getTimestamp()));
