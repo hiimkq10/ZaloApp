@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -29,16 +31,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private String senderPhoneNum;
     private String receiverImage;
     private FirebaseStorage firebaseStorage;
+    private RecyclerView.LayoutManager layoutManager;
 
     public static final int VIEW_TYPE_SENT = 1;
     public static final int VIEW_TYPE_RECEIVED = 2;
 
-    public MessageAdapter(Context context, LinkedList<ChatMessage> messages, String senderPhoneNum, String receiverImage) {
+    public MessageAdapter(Context context, LinkedList<ChatMessage> messages, RecyclerView.LayoutManager layoutManager, String senderPhoneNum, String receiverImage) {
         this.inflater = LayoutInflater.from(context);
         this.messages = messages;
         this.senderPhoneNum = senderPhoneNum;
         this.firebaseStorage = FirebaseStorage.getInstance();
         this.receiverImage = receiverImage;
+        this.layoutManager = layoutManager;
     }
 
     class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
@@ -84,7 +88,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessage mCurrent = messages.get(position);
         if (getItemViewType(position) == VIEW_TYPE_SENT) {
-            ((SentMessageViewHolder) holder).textMessage.setText(mCurrent.getContent());
+            ((SentMessageViewHolder) holder).textMessage.requestLayout();
+            ((SentMessageViewHolder) holder).textMessage.setText(mCurrent.getContent().trim());
             ((SentMessageViewHolder) holder).textTimeStamp.setText(getReadableDateTime(mCurrent.getTimestamp()));
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -96,11 +101,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     else {
                         ((SentMessageViewHolder) holder).textTimeStamp.setVisibility(View.GONE);
                     }
+                    avoidAutoScroll();
                 }
             });
         }
         else {
-            ((ReceivedMessageViewHolder) holder).textMessage.setText(mCurrent.getContent());
+            ((ReceivedMessageViewHolder) holder).textMessage.requestLayout();
+            ((ReceivedMessageViewHolder) holder).textMessage.setText(mCurrent.getContent().trim());
             ((ReceivedMessageViewHolder) holder).textTimeStamp.setText(getReadableDateTime(mCurrent.getTimestamp()));
             StorageReference storageReference = firebaseStorage.getReference()
                     .child(Constants.KEY_COLLECTION_USERS)
@@ -117,6 +124,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     else {
                         ((ReceivedMessageViewHolder) holder).textTimeStamp.setVisibility(View.GONE);
                     }
+                    avoidAutoScroll();
                 }
             });
         }
@@ -135,6 +143,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         else {
             return VIEW_TYPE_RECEIVED;
         }
+    }
+
+    private void avoidAutoScroll(){
+        View bottomItem = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
+        int bottomItemPos = layoutManager.getPosition(bottomItem);
+        int bottomOffset = layoutManager.getDecoratedTop(bottomItem);
+        ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(bottomItemPos, bottomOffset);
     }
 
     private String getReadableDateTime(Date date) {
