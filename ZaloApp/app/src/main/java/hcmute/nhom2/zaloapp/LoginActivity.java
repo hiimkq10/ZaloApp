@@ -101,8 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                         SaveUser(edtPhone.getText().toString());
 
                         Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                        Intent home = new Intent(LoginActivity.this, ListChatAndContactActivity.class);
-                        startActivity(home);
                     } else
                         Toast.makeText(LoginActivity.this, "Lỗi đăng nhập. Mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
                 }
@@ -135,6 +133,9 @@ public class LoginActivity extends AppCompatActivity {
                     preferenceManager.putString("Image", image);
                     preferenceManager.putString("PhoneNum", Phone);
                     preferenceManager.putStringSet("ListFriends", friends);
+
+                    Intent home = new Intent(LoginActivity.this, ListChatAndContactActivity.class);
+                    startActivity(home);
                 }
             }
         });

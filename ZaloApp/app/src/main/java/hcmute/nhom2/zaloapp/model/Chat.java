@@ -10,12 +10,6 @@ public class Chat extends Contact {
     public Chat() {
     }
 
-    public Chat(String latestChat, Date timestamp, Boolean read) {
-        this.latestChat = latestChat;
-        this.timestamp = timestamp;
-        this.read = read;
-    }
-
     public Chat(String phone, String name, boolean active, String image, String latestChat, Date timestamp, Boolean read) {
         super(phone, name, active, image);
         this.latestChat = latestChat;

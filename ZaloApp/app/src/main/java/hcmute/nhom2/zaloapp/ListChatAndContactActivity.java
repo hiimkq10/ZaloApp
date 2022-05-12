@@ -45,9 +45,9 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         setContentView(R.layout.activity_list_chat_and_contact);
 
         preferenceManager = new PreferenceManager(ListChatAndContactActivity.this);
-        preferenceManager.putString(Constants.KEY_Image, "avatar.png");
-        preferenceManager.putString(Constants.KEY_PhoneNum, "0123456789");
-        preferenceManager.putString(Constants.KEY_Name, "Quang");
+//        preferenceManager.putString(Constants.KEY_Image, "avatar.png");
+//        preferenceManager.putString(Constants.KEY_PhoneNum, "0123456789");
+//        preferenceManager.putString(Constants.KEY_Name, "Quang");
 //        preferenceManager.putString(Constants.KEY_PhoneNum, "1123456789");
 //        preferenceManager.putString(Constants.KEY_Name, "Thanh Hai");
 

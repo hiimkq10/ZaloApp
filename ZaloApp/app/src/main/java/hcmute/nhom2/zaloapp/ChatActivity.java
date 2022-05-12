@@ -1,7 +1,6 @@
 package hcmute.nhom2.zaloapp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -28,12 +28,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Locale;
 
 import hcmute.nhom2.zaloapp.adapter.MessageAdapter;
 import hcmute.nhom2.zaloapp.model.ChatMessage;
@@ -54,12 +52,13 @@ public class ChatActivity extends BaseActivity {
     private MessageAdapter adapter;
     private PreferenceManager preferenceManager;
     private FirebaseFirestore db;
+    private View rootView;
+    private Boolean scrooledToBottom = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
         Binding();
         LoadReceiverDetails();
         SetListeners();
@@ -70,10 +69,15 @@ public class ChatActivity extends BaseActivity {
     private void Init() {
         this.messages = new LinkedList<>();
         this.preferenceManager = new PreferenceManager(getApplicationContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
+        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        linearLayoutManager.setStackFromEnd(true);
         this.adapter = new MessageAdapter(getApplicationContext(),
                 messages,
+                linearLayoutManager,
                 preferenceManager.getString(Constants.KEY_PhoneNum),
                 receiver.getImage());
+        this.recyclerView.setLayoutManager(linearLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
         db = FirebaseFirestore.getInstance();
     }
@@ -94,6 +98,10 @@ public class ChatActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                recyclerView.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                            }
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 documentSnapshot.getReference().collection(Constants.KEY_SUB_COLLECTION_Chats).addSnapshotListener(eventListener);
                             }
@@ -107,7 +115,7 @@ public class ChatActivity extends BaseActivity {
             return;
         }
         if (value != null) {
-            int count = messages.size();
+            int count = this.messages.size();
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
@@ -118,12 +126,13 @@ public class ChatActivity extends BaseActivity {
                     this.messages.addLast(chatMessage);
                 }
             }
-            Collections.sort(this.messages, (obj1, obj2) -> obj1.getTimestamp().compareTo(obj2.getTimestamp()));
+            Collections.sort(messages, (obj1, obj2) -> obj1.getTimestamp().compareTo(obj2.getTimestamp()));
             if (count == 0) {
                 this.adapter.notifyDataSetChanged();
+                this.recyclerView.scrollToPosition(this.messages.size() - 1);
             } else {
-                this.adapter.notifyItemRangeInserted(messages.size(), messages.size());
-                this.recyclerView.smoothScrollToPosition(messages.size() - 1);
+                this.adapter.notifyItemRangeInserted(this.messages.size(), this.messages.size());
+                this.recyclerView.scrollToPosition(this.messages.size() - 1);
             }
             this.recyclerView.setVisibility(View.VISIBLE);
         }
@@ -236,6 +245,7 @@ public class ChatActivity extends BaseActivity {
         inputMessage = findViewById(R.id.inputMessage);
         recyclerView = findViewById(R.id.recyclerviewMessages);
         progressBar = findViewById(R.id.progressBar);
+        rootView = findViewById(R.id.rootView);
     }
 
     private void LoadReceiverDetails() {
@@ -274,6 +284,23 @@ public class ChatActivity extends BaseActivity {
                 Intent intent = new Intent(ChatActivity.this, ReceiverInfoActivity.class);
                 intent.putExtra("receiver", receiver);
                 startActivity(intent);
+            }
+        });
+
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int rootViewHeight = rootView.getRootView().getHeight();
+                int heightDiff = rootViewHeight - rootView.getHeight();
+                if (heightDiff > rootViewHeight * 0.15) {
+                    if (adapter.getItemCount() > 0 && !scrooledToBottom) {
+                        recyclerView.scrollToPosition(messages.size() - 1);
+                        scrooledToBottom = true;
+                    }
+                }
+                else {
+                    scrooledToBottom = false;
+                }
             }
         });
     }
