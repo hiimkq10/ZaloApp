@@ -1,9 +1,11 @@
 package hcmute.nhom2.zaloapp.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.images.ImageManager;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -47,6 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
         public final TextView textMessage, textTimeStamp;
+        public final ImageView imageMessage;
         public final ShapeableImageView receiverImage;
         final MessageAdapter adapter;
 
@@ -55,17 +60,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.textMessage = itemView.findViewById(R.id.textMessage);
             this.textTimeStamp = itemView.findViewById(R.id.textTimeStamp);
             this.receiverImage = itemView.findViewById(R.id.receiverImage);
+            this.imageMessage = itemView.findViewById(R.id.ImageMessage);
             this.adapter = adapter;
         }
     }
 
     class SentMessageViewHolder extends RecyclerView.ViewHolder {
         public final TextView textMessage, textTimeStamp;
+        public final ImageView imageMessage;
         final MessageAdapter adapter;
 
         public SentMessageViewHolder(@NonNull View itemView, MessageAdapter adapter) {
             super(itemView);
             this.textMessage = itemView.findViewById(R.id.textMessage);
+            this.imageMessage = itemView.findViewById(R.id.ImageMessage);
             this.textTimeStamp = itemView.findViewById(R.id.textTimeStamp);
             this.adapter = adapter;
         }
@@ -89,9 +97,29 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ChatMessage mCurrent = messages.get(position);
         if (getItemViewType(position) == VIEW_TYPE_SENT) {
             ((SentMessageViewHolder) holder).textMessage.requestLayout();
-            ((SentMessageViewHolder) holder).textMessage.setText(mCurrent.getContent().trim());
             ((SentMessageViewHolder) holder).textTimeStamp.setText(getReadableDateTime(mCurrent.getTimestamp()));
+            if (mCurrent.getType().equals("Text")){
+                ((SentMessageViewHolder) holder).textMessage.setVisibility(View.VISIBLE);
+                ((SentMessageViewHolder) holder).imageMessage.setVisibility(View.GONE);
 
+                ((SentMessageViewHolder) holder).textMessage.setText(mCurrent.getContent().trim());
+            }
+            else{
+                ((SentMessageViewHolder) holder).textMessage.setVisibility(View.GONE);
+                ((SentMessageViewHolder) holder).imageMessage.setVisibility(View.VISIBLE);
+
+                StorageReference storageReference = firebaseStorage.getReference()
+                        .child(Constants.KEY_COLLECTION_USERS)
+                        .child(Constants.KEY_STORAGE_FOLDER_UserImages)
+                        .child(mCurrent.getContent());
+                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        final String downloadUrl = uri.toString();
+                        Glide.with(holder.itemView.getContext()).load(downloadUrl).into(((SentMessageViewHolder) holder).imageMessage);
+                    }
+                });
+            }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -114,7 +142,28 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .child(Constants.KEY_STORAGE_FOLDER_UserImages)
                     .child(this.receiverImage);
             Glide.with(holder.itemView.getContext()).load(storageReference).into(((ReceivedMessageViewHolder) holder).receiverImage);
+            if (mCurrent.getType().equals("Text")){
+                ((ReceivedMessageViewHolder) holder).textMessage.setVisibility(View.VISIBLE);
+                ((ReceivedMessageViewHolder) holder).imageMessage.setVisibility(View.GONE);
 
+                ((ReceivedMessageViewHolder) holder).textMessage.setText(mCurrent.getContent().trim());
+            }
+            else{
+                ((ReceivedMessageViewHolder) holder).textMessage.setVisibility(View.GONE);
+                ((ReceivedMessageViewHolder) holder).imageMessage.setVisibility(View.VISIBLE);
+
+                StorageReference storage = firebaseStorage.getReference()
+                        .child(Constants.KEY_COLLECTION_USERS)
+                        .child(Constants.KEY_STORAGE_FOLDER_UserImages)
+                        .child(mCurrent.getContent());
+                storage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        final String downloadUrl = uri.toString();
+                        Glide.with(holder.itemView.getContext()).load(downloadUrl).into(((ReceivedMessageViewHolder) holder).imageMessage);
+                    }
+                });
+            }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

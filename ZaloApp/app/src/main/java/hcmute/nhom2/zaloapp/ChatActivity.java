@@ -1,16 +1,23 @@
 package hcmute.nhom2.zaloapp;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,6 +39,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.UUID;
 
 import hcmute.nhom2.zaloapp.adapter.MessageAdapter;
 import hcmute.nhom2.zaloapp.model.ChatMessage;
@@ -44,7 +52,7 @@ public class ChatActivity extends BaseActivity {
     private Contact receiver;
     private ShapeableImageView receiverImage;
     private TextView receiverName;
-    private ImageButton btnBack, btnInfo, btnSend;
+    private ImageButton btnBack, btnInfo, btnSend, btnImage;
     private EditText inputMessage;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
@@ -55,6 +63,9 @@ public class ChatActivity extends BaseActivity {
     private View rootView;
     private Boolean scrooledToBottom = false;
 
+    ActivityResultLauncher<String> takePhoto;
+    Uri imageUri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +75,8 @@ public class ChatActivity extends BaseActivity {
         SetListeners();
         Init();
         ListenMessages();
+
+        SelectImage();
     }
 
     private void Init() {
@@ -217,14 +230,14 @@ public class ChatActivity extends BaseActivity {
                                 db.collection(Constants.KEY_Rooms)
                                         .add(room)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        documentReference.collection(Constants.KEY_SUB_COLLECTION_Chats)
-                                                .add(message);
-                                        documentReference.collection(Constants.KEY_SUB_COLLECTION_Chats)
-                                                .addSnapshotListener(eventListener);
-                                    }
-                                });
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                documentReference.collection(Constants.KEY_SUB_COLLECTION_Chats)
+                                                        .add(message);
+                                                documentReference.collection(Constants.KEY_SUB_COLLECTION_Chats)
+                                                        .addSnapshotListener(eventListener);
+                                            }
+                                        });
                             }
                         }
                         else {
@@ -242,6 +255,7 @@ public class ChatActivity extends BaseActivity {
         btnBack = findViewById(R.id.btnBack);
         btnInfo = findViewById(R.id.btnInfo);
         btnSend = findViewById(R.id.btnSend);
+        btnImage = findViewById(R.id.btnImage);
         inputMessage = findViewById(R.id.inputMessage);
         recyclerView = findViewById(R.id.recyclerviewMessages);
         progressBar = findViewById(R.id.progressBar);
@@ -275,6 +289,9 @@ public class ChatActivity extends BaseActivity {
                     SendMessage();
                     inputMessage.setText(null);
                 }
+//                if(imageUri != null){
+//                    SendImage(imageUri);
+//                }
             }
         });
 
@@ -305,7 +322,131 @@ public class ChatActivity extends BaseActivity {
         });
     }
 
-//    private String getReadableDateTime(Date date) {
+    //    private String getReadableDateTime(Date date) {
 //        return new SimpleDateFormat("MMMM dd, yyyy -- hh:mm a", Locale.getDefault()).format(date);
 //    }
+    public void SelectImage()
+    {
+        takePhoto = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri result) {
+                        imageUri = result;
+                        SendImage(imageUri);
+                    }
+                });
+
+        btnImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePhoto.launch("image/*");
+            }
+        });
+    }
+    private void SendImage(Uri uri) {
+        String name = UUID.randomUUID().toString();
+        StorageReference fileRef = FirebaseStorage.getInstance().getReference("Users/UserImages/").child(name + "." + getFileExtension(uri));
+        String filename = name + "." + getFileExtension(uri);
+        fileRef.putFile(uri);
+
+        HashMap<String, Object> message = new HashMap<>();
+        message.put(Constants.KEY_SenderPhoneNum, preferenceManager.getString(Constants.KEY_PhoneNum));
+        message.put(Constants.KEY_Type, "Image");
+        message.put(Constants.KEY_Content, filename);
+        message.put(Constants.KEY_Timestamp, new Date());
+
+        final String flag;
+        if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(this.receiver.getPhone()) < 0) {
+            flag = preferenceManager.getString(Constants.KEY_PhoneNum) + "_" + this.receiver.getPhone();
+        }
+        else {
+            flag = this.receiver.getPhone() + "_" + preferenceManager.getString(Constants.KEY_PhoneNum);
+        }
+
+        db.collection(Constants.KEY_Rooms)
+                .whereEqualTo(flag, true)
+                .limit(1)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult().size() > 0) {
+                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                    String id = documentSnapshot.getId();
+
+                                    HashMap<String, Object> chat = new HashMap<>();
+                                    chat.put(Constants.KEY_Content, "[Hình ảnh]");
+                                    chat.put(Constants.KEY_Timestamp, message.get(Constants.KEY_Timestamp));
+
+                                    HashMap<String, Object> updates = new HashMap<>();
+                                    updates.put(Constants.KEY_COLLECTION_USERS + "." + receiver.getPhone() + "." + Constants.KEY_Read, false);
+                                    updates.put(Constants.KEY_LatestChat, chat);
+
+                                    db.collection(Constants.KEY_Rooms)
+                                            .document(id)
+                                            .update(updates)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    db.collection(Constants.KEY_Rooms)
+                                                            .document(id)
+                                                            .collection(Constants.KEY_SUB_COLLECTION_Chats)
+                                                            .add(message);
+                                                }
+                                            });
+                                }
+
+                            }
+                            else {
+                                HashMap<String, Object> sender = new HashMap<>();
+                                sender.put(Constants.KEY_Name, preferenceManager.getString(Constants.KEY_Name));
+                                sender.put(Constants.KEY_Image, preferenceManager.getString(Constants.KEY_Image));
+                                sender.put(Constants.KEY_Read, true);
+                                sender.put(Constants.KEY_Active, true);
+
+                                HashMap<String, Object> recieverUser = new HashMap<>();
+                                recieverUser.put(Constants.KEY_Name, receiver.getName());
+                                recieverUser.put(Constants.KEY_Image, receiver.getImage());
+                                recieverUser.put(Constants.KEY_Read, false);
+                                recieverUser.put(Constants.KEY_Active, receiver.isActive());
+
+                                HashMap<String, Object> users = new HashMap<>();
+                                users.put(preferenceManager.getString(Constants.KEY_PhoneNum), sender);
+                                users.put(receiver.getPhone(), recieverUser);
+
+                                HashMap<String, Object> chat = new HashMap<>();
+                                chat.put(Constants.KEY_Content, message.get(Constants.KEY_Content));
+                                chat.put(Constants.KEY_Timestamp, message.get(Constants.KEY_Timestamp));
+
+                                HashMap<String, Object> room = new HashMap<>();
+                                room.put(flag, true);
+                                room.put(Constants.KEY_COLLECTION_USERS, users);
+                                room.put(Constants.KEY_LatestChat, chat);
+                                db.collection(Constants.KEY_Rooms)
+                                        .add(room)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                documentReference.collection(Constants.KEY_SUB_COLLECTION_Chats)
+                                                        .add(message);
+                                                documentReference.collection(Constants.KEY_SUB_COLLECTION_Chats)
+                                                        .addSnapshotListener(eventListener);
+                                            }
+                                        });
+                            }
+                        }
+                        else {
+                            Log.d("Send Message Failed", "get failed with ", task.getException());
+                        }
+                    }
+                });
+
+    }
+    private String getFileExtension(Uri mUri){
+        ContentResolver cr = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(mUri));
+    }
+
 }
