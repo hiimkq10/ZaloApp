@@ -1,16 +1,23 @@
 package hcmute.nhom2.zaloapp;
 
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -35,6 +42,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,6 +73,7 @@ public class ChatActivity extends BaseActivity {
     private Boolean scrooledToBottom = false;
 
     ActivityResultLauncher<String> takePhoto;
+    ActivityResultLauncher<Intent> activityResultLauncher;
     Uri imageUri;
 
     @Override
@@ -289,9 +299,6 @@ public class ChatActivity extends BaseActivity {
                     SendMessage();
                     inputMessage.setText(null);
                 }
-//                if(imageUri != null){
-//                    SendImage(imageUri);
-//                }
             }
         });
 
@@ -335,11 +342,42 @@ public class ChatActivity extends BaseActivity {
                         SendImage(imageUri);
                     }
                 });
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK && result.getData() !=null) {
+                    Bitmap image = (Bitmap) result.getData().getExtras().get("data");
+                    imageUri = getImageUri(ChatActivity.this,image);
+                    SendImage(imageUri);
+                }
+            }
+        });
 
         btnImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                takePhoto.launch("image/*");
+                //takePhoto.launch("image/*");
+                String[] items = {"Thư viện", "Máy ảnh", "Đóng"};
+                AlertDialog.Builder b = new AlertDialog.Builder(ChatActivity.this);
+                b.setTitle("Chọn ảnh từ:");
+                b.setItems(items, new DialogInterface.OnClickListener() {
+                    //Xử lý sự kiện
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (items[which].equals("Máy ảnh"))
+                        {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            activityResultLauncher.launch(intent);
+                        }
+                        else if (items[which].equals("Thư viện"))
+                        {
+                            takePhoto.launch("image/*");
+                        }
+                        else if (items[which].equals("Đóng")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                b.show();
             }
         });
     }
@@ -448,5 +486,12 @@ public class ChatActivity extends BaseActivity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(mUri));
     }
+    public static final int CAMERA_CODE = 123;
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 }
