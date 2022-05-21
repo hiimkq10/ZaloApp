@@ -25,4 +25,8 @@ public class Constants {
     public static final String KEY_STORAGE_FOLDER_UserImages = "UserImages";
     public static final String KEY_PREFERENCE_NAME = "ChatAppPreference";
     public static final String KEY_User = "User";
+    public static final String KEY_COLLECTION_Notifications = "Notifications";
+    public static final String KEY_From = "From";
+    public static final String KEY_To = "To";
+    public static final String KEY_NOTIFICATION_TYPE_FriendRequest = "Friend_Request";
 }

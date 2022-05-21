@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="0dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginLeft="15dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginEnd="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/userContactImage"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/circle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/userContactName"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/purple_200"
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/userContactActive"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:shapeAppearanceOverlay="@style/circle"
+            app:layout_constraintBottom_toBottomOf="@id/userContactImage"
+            app:layout_constraintRight_toRightOf="@id/userContactImage"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginRight="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/white"
+            />
+
+        <TextView
+            android:id="@+id/userContactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nguyễn Xuân Phúc"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/userContactImage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textSize="18dp"/>
+
+        <Button
+            android:id="@+id/sendRequestBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/myContainedButton"
+            android:backgroundTint="@color/nav_color"
+            android:text="Add Friend"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

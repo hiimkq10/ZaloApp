@@ -29,12 +29,12 @@ import hcmute.nhom2.zaloapp.utilities.Constants;
 import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ContactViewHolder> {
-    private final LinkedList<Contact> contacts;
-    private LayoutInflater mInflater;
-    private Context context;
-    private FirebaseFirestore db;
-    private FirebaseStorage firebaseStorage;
-    private PreferenceManager preferenceManager;
+    protected final LinkedList<Contact> contacts;
+    protected LayoutInflater mInflater;
+    protected Context context;
+    protected FirebaseFirestore db;
+    protected FirebaseStorage firebaseStorage;
+    protected PreferenceManager preferenceManager;
 
     public ContactListAdapter(Context context, LinkedList<Contact> contacts) {
         this.mInflater = LayoutInflater.from(context);
