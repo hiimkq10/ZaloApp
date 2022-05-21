@@ -52,7 +52,6 @@ public class ListContactFragment extends Fragment {
         CollectionReference colRef = db.collection(Constants.KEY_COLLECTION_USERS);
 
         colRef.whereArrayContains(Constants.KEY_ListFriends, preferenceManager.getString(Constants.KEY_PhoneNum))
-                .limit(10)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

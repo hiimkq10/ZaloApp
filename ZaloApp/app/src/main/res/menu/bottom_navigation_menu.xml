@@ -9,4 +9,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_contract"
         android:title="@string/menu_contact"/>
+
+    <item android:id="@+id/menu_notification"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_notifications_24"
+        android:title="@string/notification"/>
 </menu>

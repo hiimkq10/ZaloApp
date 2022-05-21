@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hcmute.nhom2.zaloapp">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,12 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZaloApp">
         <activity
+            android:name=".SearchActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+        <activity
             android:name=".ReceiverInfoActivity"
             android:exported="false" />
         <activity
             android:name=".ChatActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ListChatAndContactActivity"
             android:exported="false" />
@@ -30,12 +34,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".RegisActivity"/>
-        <activity android:name=".UpdateAccountActivity"/>
-        <activity android:name=".ForgotPassActivity"/>
-        <activity android:name=".AccountSettingActivity"/>
-        <activity android:name=".InfoAccountActivity"/>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RegisActivity" />
+        <activity android:name=".UpdateAccountActivity" />
+        <activity android:name=".ForgotPassActivity" />
+        <activity android:name=".AccountSettingActivity" />
+        <activity android:name=".InfoAccountActivity" />
     </application>
 
 </manifest>
