@@ -37,18 +37,19 @@ public class RegisActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        //Ánh xạ control từ file xml
         AnhXa();
 
-        //Init Firebase
+        //Khởi tạo Firebase
         db = FirebaseFirestore.getInstance();
-
+        //Nhấn nút Đăng ký
         btnRegis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Regis();
             }
         });
+        //Quay lại trang trước
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,8 +57,8 @@ public class RegisActivity extends AppCompatActivity {
             }
         });
     }
+    //Ánh xạ control từ file xml
     private void AnhXa(){
-        //Anh xa
         edtName = findViewById(R.id.edtName);
         edtPhoneRegis = findViewById(R.id.edtPhoneRegis);
         edtBirth = findViewById(R.id.edtBirth);
@@ -71,6 +72,7 @@ public class RegisActivity extends AppCompatActivity {
 
         back = findViewById(R.id.back_main2);
     }
+    //Đăng ký tài khoản
     private void Regis(){
         if(edtName.getText().toString().equals("")) {
             Toast.makeText(RegisActivity.this, "Vui lòng nhập tên", Toast.LENGTH_SHORT).show();
@@ -92,6 +94,7 @@ public class RegisActivity extends AppCompatActivity {
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    //Kiểm tra xem sdt đã có đăng ký tài khoản chưa
                     if (task.getResult().exists()){
                         Toast.makeText(RegisActivity.this, "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
 
@@ -115,6 +118,7 @@ public class RegisActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void unused) {
                                 Toast.makeText(RegisActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+                                //Đăng ký thành công chuyển sang trang Đăng nhập
                                 Intent login = new Intent(RegisActivity.this, LoginActivity.class);
                                 startActivity(login);
                             }

@@ -86,7 +86,7 @@ public class ChatActivity extends BaseActivity {
         Init();
         ListenMessages();
 
-        SelectImage();
+        SelectImage();// Chọn hình ảnh gửi
     }
 
     private void Init() {
@@ -332,31 +332,33 @@ public class ChatActivity extends BaseActivity {
     //    private String getReadableDateTime(Date date) {
 //        return new SimpleDateFormat("MMMM dd, yyyy -- hh:mm a", Locale.getDefault()).format(date);
 //    }
+    //Chọn hình ảnh
     public void SelectImage()
     {
+        //Lấy uri ảnh được chọn để gửi
         takePhoto = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
                     @Override
                     public void onActivityResult(Uri result) {
                         imageUri = result;
-                        SendImage(imageUri);
+                        SendImage(imageUri);//Gửi ảnh
                     }
                 });
+        //Lấy bitmap ảnh chụp từ máy ảnh
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == RESULT_OK && result.getData() !=null) {
                     Bitmap image = (Bitmap) result.getData().getExtras().get("data");
-                    imageUri = getImageUri(ChatActivity.this,image);
-                    SendImage(imageUri);
+                    imageUri = getImageUri(ChatActivity.this,image);//Chuyển bitmap snag uri
+                    SendImage(imageUri);// Gửi ảnh
                 }
             }
         });
-
+        //Tùy chọn gửi ảnh từ thư mục image hoặc từ máy ảnh
         btnImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //takePhoto.launch("image/*");
                 String[] items = {"Thư viện", "Máy ảnh", "Đóng"};
                 AlertDialog.Builder b = new AlertDialog.Builder(ChatActivity.this);
                 b.setTitle("Chọn ảnh từ:");
@@ -381,10 +383,11 @@ public class ChatActivity extends BaseActivity {
             }
         });
     }
+    //Gửi tin nhắn dạng hình ảnh
     private void SendImage(Uri uri) {
-        String name = UUID.randomUUID().toString();
+        String name = UUID.randomUUID().toString(); // Tạo ngẫu nhiên tên ảnh
         StorageReference fileRef = FirebaseStorage.getInstance().getReference("Users/UserImages/").child(name + "." + getFileExtension(uri));
-        String filename = name + "." + getFileExtension(uri);
+        String filename = name + "." + getFileExtension(uri);// Tên ảnh đầy đủ
         fileRef.putFile(uri);
 
         HashMap<String, Object> message = new HashMap<>();
@@ -414,7 +417,7 @@ public class ChatActivity extends BaseActivity {
                                     String id = documentSnapshot.getId();
 
                                     HashMap<String, Object> chat = new HashMap<>();
-                                    chat.put(Constants.KEY_Content, "[Hình ảnh]");
+                                    chat.put(Constants.KEY_Content, "[Hình ảnh]"); // Đặt tin nhắn cuối cùng
                                     chat.put(Constants.KEY_Timestamp, message.get(Constants.KEY_Timestamp));
 
                                     HashMap<String, Object> updates = new HashMap<>();
@@ -481,13 +484,14 @@ public class ChatActivity extends BaseActivity {
                 });
 
     }
+    //Lấy phần mở rộng tệp
     private String getFileExtension(Uri mUri){
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(mUri));
     }
     public static final int CAMERA_CODE = 123;
-
+    //Lấy uri của ảnh từ Bitmap
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);

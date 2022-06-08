@@ -43,20 +43,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        //Ánh xạ control từ file xml
         AnhXa();
 
-        //Init
+        //Khởi tại Firebase
         db = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(getApplicationContext());
-
+        //Quay lại tran trước
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-
+        //Đặt lại mật khẩu
         txtResetPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(forgetPass);
             }
         });
-
+        //Đăng nhập
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    //Ánh xạ control từ file xml
     private  void AnhXa(){
         edtPhone = (EditText) findViewById(R.id.edtPhone);
         edtPass = (EditText) findViewById(R.id.edtPass);
@@ -79,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.btnLogin);
         back = (ImageView) findViewById(R.id.back_main);
     }
+    //Đăng nhập
     private void login(){
         if (edtPhone.getText().toString().equals("")) {
             Toast.makeText(LoginActivity.this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
@@ -94,12 +96,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    String b = doc.getString(Constants.KEY_Password);
-                    String b1 = edtPass.getText().toString().trim();
+                    String b = doc.getString(Constants.KEY_Password); // Mật khẩu theo sdt trong csdl
+                    String b1 = edtPass.getText().toString().trim();// Mật khẩu người dùng nhâpj
                     if (Objects.equals(b, b1)) {
 
-                        updateActive(edtPhone.getText().toString());
-                        SaveUser(edtPhone.getText().toString());
+                        updateActive(edtPhone.getText().toString());// Bật trạng thái hoạt động
+                        SaveUser(edtPhone.getText().toString());// Lưu thông tin người đăng nhập thành công
 
                         Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                     } else
@@ -108,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    // Lưu thông tin người dùng
     private void SaveUser(String PhoneNum){
 
         db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum)
@@ -118,9 +121,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.getResult().exists()) {
                     DocumentSnapshot doc = task.getResult();
                     assert doc != null;
-                    String name = doc.getString(Constants.KEY_Name);
-                    String image = doc.getString(Constants.KEY_Image);
-                    List<String> listFriends = (List<String>) doc.get("ListFriends");
+                    String name = doc.getString("Name"); //Tên người dùng
+                    String image = doc.getString("Image");// Tên file ảnh đại diện
+                    List<String> listFriends = (List<String>) doc.get("ListFriends"); //Danh sách bạn bè
+
 
                     Set<String> friends = new HashSet<String>();
                     if( listFriends != null)

@@ -29,15 +29,15 @@ public class ForgotPassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_pass);
 
-        //Anh xa
+        //Ánh xạ control từ file xml
         edtPhone = findViewById(R.id.edtPhoneForgotPass);
         edtPass = findViewById(R.id.edtPassForgotPass);
         edtRePass = findViewById(R.id.edtRePassForgotPass);
         btnUpdatePass = findViewById(R.id.btnUpdatePass);
 
-        //Init Firebase
+        //Khởi tạo Firebase
         db = FirebaseFirestore.getInstance();
-
+        //Cập nhật mật khẩu
         btnUpdatePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
