@@ -39,14 +39,16 @@ public class InfoAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_account);
-
+        //Ánh xạ control từ file xml
         AnhXa();
 
-        //Init Firebase
+        //Khởi tạo Firebase
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        //Tạo preferenceManager tham chiếu đến SharedPreferences
         preferenceManager = new PreferenceManager(getApplicationContext());
 
+        //Chuyển đến trang cập nhật thông tin
         btnUpdateInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +56,7 @@ public class InfoAccountActivity extends AppCompatActivity {
                 startActivity(update);
             }
         });
-
+        //Trở về trang trước
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,12 +65,12 @@ public class InfoAccountActivity extends AppCompatActivity {
         });
 
     }
-
     @Override
     protected void onStart() {
         super.onStart();
+        //Lấy số điện thoại đang đăng nhập vào hệ thống được lưu trữ trong với khóa "PhoneNum"
         String PhoneNum = preferenceManager.getString("PhoneNum");
-
+        //Lấy thôgn tin người dùng và hiển thị
         db.collection(Constants.KEY_COLLECTION_USERS).document(PhoneNum)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -77,14 +79,14 @@ public class InfoAccountActivity extends AppCompatActivity {
                     DocumentSnapshot doc = task.getResult();
 
                     assert doc != null;
-                    String name = doc.getString(Constants.KEY_Name);
-                    String gender = doc.getString(Constants.KEY_Gender);
-                    String birth = doc.getString(Constants.KEY_Birth);
-                    String image = doc.getString(Constants.KEY_Image);
-                    String coverImage = doc.getString(Constants.KEY_CoverImage);
+                    String name = doc.getString("Name");    //Ten nguoi dung
+                    String gender = doc.getString("Gender");//Gioi tinh
+                    String birth = doc.getString("Birth");  //Ngay sinh
+                    String image = doc.getString("Image");  //Ten anh dai dien
+                    String coverImage = doc.getString("CoverImage");//Ten anh bia
 
-                    loadImage(image, imgAvt);
-                    loadImage(coverImage, imgCoverImage);
+                    loadImage(image, imgAvt); // Hiển thị ảnh đại diện
+                    loadImage(coverImage, imgCoverImage);// Hiển thị ảnh bìa
                     txtName.setText(name);
                     txtBirth.setText(birth);
                     if(gender.equals("Female")){
@@ -107,6 +109,7 @@ public class InfoAccountActivity extends AppCompatActivity {
                     }
                 });
     }
+    //Ánh xạ control từ file xml
     public  void AnhXa(){
         btnUpdateInfo = findViewById(R.id.btnUpdateInfo);
         txtName = findViewById(R.id.txtName);
@@ -117,7 +120,7 @@ public class InfoAccountActivity extends AppCompatActivity {
         imgCoverImage = findViewById(R.id.imgCoverImage);
         back = findViewById(R.id.back_setting1);
     }
-
+    //Lấy ảnh từ firebase và hiển thị lên imageView
     private void loadImage(String imageName, ImageView imageView){
         StorageReference storageReference = storage.getReference()
                 .child(Constants.KEY_COLLECTION_USERS)

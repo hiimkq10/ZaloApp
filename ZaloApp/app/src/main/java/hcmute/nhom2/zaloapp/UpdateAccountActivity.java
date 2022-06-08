@@ -65,15 +65,18 @@ public class UpdateAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_account);
-
+        //Ánh xạ control từ file xml
         AnhXa();
 
-        //Init Firebase
+        //Khởi tại Firebase
         db = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("Users/UserImages/");
         storage = FirebaseStorage.getInstance();
+
+        //Tạo preferenceManager tham chiếu đến SharedPreferences
         preferenceManager = new PreferenceManager(getApplicationContext());
 
+        //Lấy uri ảnh đại diện
         takePhotoAvt = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
                     @Override
@@ -82,14 +85,14 @@ public class UpdateAccountActivity extends AppCompatActivity {
                         imageUriAvt = result;
                     }
                 });
-
+        //Mở thu mục image
         imgAvtEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 takePhotoAvt.launch("image/*");
             }
         });
-
+        //Lấy uri ảnh bìa
         takePhotoBg = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 new ActivityResultCallback<Uri>() {
                     @Override
@@ -98,7 +101,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
                         imageUriBg = result;
                     }
                 });
-
+        //Mở thu mục image
         imgCoverImageEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,7 +115,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
                 updateAccount();
             }
         });
-
+        //Tro ve trang truoc
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,8 +126,9 @@ public class UpdateAccountActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        //Lấy số điện thoại đang đăng nhập vào hệ thống được lưu trữ trong với khóa "PhoneNum"
         String PhoneNum = preferenceManager.getString("PhoneNum");
+        //Lấy thôgn tin người dùng và hiển thị
         db.collection("Users").document(PhoneNum)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -133,11 +137,11 @@ public class UpdateAccountActivity extends AppCompatActivity {
                             DocumentSnapshot doc = task.getResult();
 
                             assert doc != null;
-                            String name = doc.getString("Name");
-                            String gender = doc.getString("Gender");
-                            String birth = doc.getString("Birth");
-                            String image = doc.getString("Image");
-                            String coverImage = doc.getString("CoverImage");
+                            String name = doc.getString("Name");    //Ten nguoi dung
+                            String gender = doc.getString("Gender");//Gioi tinh
+                            String birth = doc.getString("Birth");  //Ngay sinh
+                            String image = doc.getString("Image");  //Ten anh dai dien
+                            String coverImage = doc.getString("CoverImage");//Ten anh bia
 
                             edtNameEdit.setText(name);
                             edtBirthEdit.setText(birth);
@@ -169,6 +173,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
                     }
                 });
     }
+    //Ánh xạ control từ file xml
     private void AnhXa(){
         edtNameEdit = findViewById(R.id.edtNameEdit);
         edtBirthEdit = findViewById(R.id.edtBirthEdit);
@@ -179,10 +184,10 @@ public class UpdateAccountActivity extends AppCompatActivity {
         imgCoverImageEdit = findViewById(R.id.imgCoverImageEdit);
         back = findViewById(R.id.back_setting2);
     }
-
+    //Cập nhật thông tin người dùng
     private void updateAccount(){
-        String avt = "Image", bg = "CoverImage";
-        String PhoneNum = preferenceManager.getString("PhoneNum");
+        String avt = "Image", bg = "CoverImage";    // Tao bien de phan biet anh dai dien - anh bia
+        String PhoneNum = preferenceManager.getString("PhoneNum");  //Lay sdt dang dang nhap vao he thong
         if(edtNameEdit.getText().toString().equals("")) {
             Toast.makeText(UpdateAccountActivity.this, "Vui lòng nhập tên", Toast.LENGTH_SHORT).show();
 
@@ -228,16 +233,16 @@ public class UpdateAccountActivity extends AppCompatActivity {
             });
         }
     }
-
+    //upload ảnh lên firebase
     private void uploadToFirebase(Uri uri, String imageType){
-        String PhoneNum = preferenceManager.getString("PhoneNum");
+        String PhoneNum = preferenceManager.getString("PhoneNum"); //Lay sdt dang dang nhap vao he thong
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Uploading file.....");
         progressDialog.show();
 
-        String name = UUID.randomUUID().toString();
+        String name = UUID.randomUUID().toString(); //Tạo ngẫu nhiên tên ảnh
         StorageReference fileRef = storageReference.child(name + "." + getFileExtension(uri));
-        String filename = name + "." + getFileExtension(uri);
+        String filename = name + "." + getFileExtension(uri); //Tên ảnh đầy đủ
         fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -245,9 +250,9 @@ public class UpdateAccountActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         Map<String, Object> data = new HashMap<>();
-                        data.put(imageType, filename);
+                        data.put(imageType, filename);  // Cập nhật tên ảnh trong trường Image/CoverImage
                         db.collection("Users").document(PhoneNum).update(data);
-                        updateImageAnywhere(PhoneNum,filename);
+                        updateImageAnywhere(PhoneNum,filename); // Cập nhật ảnh trong Chats
 
                         Toast.makeText(UpdateAccountActivity.this,"Đổi ảnh thành công", Toast.LENGTH_SHORT).show();
                         imgAvtEdit.setImageResource(R.drawable.anh1);
@@ -270,12 +275,13 @@ public class UpdateAccountActivity extends AppCompatActivity {
             }
         });
     }
+    //Lấy phần mở rộng tệp
     private String getFileExtension(Uri mUri){
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(mUri));
     }
-
+    //Load lại imageView sau khi thay đổi ảnh
     private void loadImage(String imageName, ImageView imageView){
         StorageReference storageReference = storage.getReference()
                 .child(Constants.KEY_COLLECTION_USERS)
@@ -289,6 +295,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
             }
         });
     }
+    //Cập nhật trường Image của người dùng trong Collection Chats
     private void updateImageAnywhere(String PhoneNum, String fileName) {
         db.collection(Constants.KEY_Rooms)
                 .orderBy(Constants.KEY_COLLECTION_USERS + "." + PhoneNum).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -304,6 +311,7 @@ public class UpdateAccountActivity extends AppCompatActivity {
             }
         });
     }
+    //Cập nhật trường Name của người dùng trong Collection Chats
     private void updateNameAnywhere(String PhoneNum, String newName) {
         db.collection(Constants.KEY_Rooms)
                 .orderBy(Constants.KEY_COLLECTION_USERS + "." + PhoneNum).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
