@@ -8,7 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="nav_color">#0A7CFF</color>
+    <color name="blue">#0A7CFF</color>
     <color name="status_bar_color">#204DFF</color>
     <color name="background_chat_input">#e5e6e9</color>
     <color name="background_message">#35118D</color>
+    <color name="gray">#F5F5F5</color>
 </resources>

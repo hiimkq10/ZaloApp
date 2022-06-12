@@ -1,5 +1,6 @@
 package hcmute.nhom2.zaloapp.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.LinkedList;
 
 import hcmute.nhom2.zaloapp.Loading;
+import hcmute.nhom2.zaloapp.PhoneContactActivity;
 import hcmute.nhom2.zaloapp.R;
 import hcmute.nhom2.zaloapp.adapter.ContactListAdapter;
 import hcmute.nhom2.zaloapp.model.Contact;
@@ -34,11 +37,23 @@ public class ListContactFragment extends Fragment {
     private PreferenceManager preferenceManager;
     private View view;
     private Loading loading;
+    private View phoneContactLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_list_contact, container, false);
+
+        phoneContactLayout = view.findViewById(R.id.phone_contacts_layout);
+
+        phoneContactLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), PhoneContactActivity.class);
+                startActivity(intent);
+            }
+        });
+
         this.loading = (Loading) getActivity();
         preferenceManager = new PreferenceManager(getContext());
         db = FirebaseFirestore.getInstance();
