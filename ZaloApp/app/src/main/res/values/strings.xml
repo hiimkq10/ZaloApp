@@ -13,4 +13,6 @@
     <string name="add_friend">Add Friend</string>
     <string name="accept_request">Accept</string>
     <string name="notification">Notification</string>
+    <string name="phone_contacts">Danh bạ máy</string>
+    <string name="phone_contacts_desc">Các liên hệ có dùng Zalo</string>
 </resources>

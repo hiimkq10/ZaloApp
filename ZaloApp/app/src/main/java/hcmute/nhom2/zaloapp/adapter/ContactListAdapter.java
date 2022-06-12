@@ -85,6 +85,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             public void onClick(View view) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra(Constants.KEY_User, mCurrent);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 final String flag;
                 if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(mCurrent.getPhone()) < 0) {

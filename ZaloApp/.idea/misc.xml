@@ -29,6 +29,7 @@
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/background_sent_message.xml" value="0.244" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/ic_baseline_arrow_back.xml" value="0.244" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/ic_baseline_back.xml" value="0.2215" />
+        <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/ic_baseline_contacts.xml" value="0.124" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/ic_baseline_info.xml" value="0.244" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.1235" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/drawable/ic_baseline_search.xml" value="0.2215" />
@@ -41,6 +42,7 @@
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_list_chat_and_contact.xml" value="0.23550724637681159" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_login.xml" value="0.17980072463768115" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
+        <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_phone_contact.xml" value="0.25416666666666665" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_receiver_info.xml" value="0.1453125" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_register.xml" value="0.17980072463768115" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/activity_search.xml" value="0.25416666666666665" />
@@ -49,7 +51,7 @@
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/contact_item.xml" value="0.23550724637681159" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/fragment_info_account.xml" value="0.25416666666666665" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/fragment_list_chat.xml" value="0.18478260869565216" />
-        <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/fragment_list_contact.xml" value="0.23550724637681159" />
+        <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/fragment_list_contact.xml" value="0.2" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/fragment_list_notification.xml" value="0.25416666666666665" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/friend_request.xml" value="0.264" />
         <entry key="..\:/LapTrinhDiDong/DoAn/ZaloApp/ZaloApp/app/src/main/res/layout/recieved_message.xml" value="0.23550724637681159" />

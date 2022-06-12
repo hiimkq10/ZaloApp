@@ -5,8 +5,11 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,9 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZaloApp">
         <activity
-            android:name=".SearchActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".PhoneContactActivity"
             android:exported="false" />
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ReceiverInfoActivity"
             android:exported="false" />
