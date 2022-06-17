@@ -34,8 +34,8 @@ public class SearchActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RecyclerView searchRecyclerView;
     private ImageView backBtn;
-    long delay = 500; // 0.5 seconds after user stops typing
-    long last_text_edit = 0;
+    long delay = 500; // 0.5 giây sau khi người dùng dừng nhập
+    long last_text_edit = 0; // Thời điểm lần cuối thay đổi giá trị searchEdt
     private LinkedList<Contact> contacts;
     private SearchAdapter searchAdapter;
     public final int PHONE_LENGTH = 10;
@@ -51,7 +51,10 @@ public class SearchActivity extends AppCompatActivity {
         Init();
         SetListener();
 
+        // Khởi tạo handler
         Handler handler = new Handler();
+
+        // Gán sự kiến thay đổi giá trị của search edittext
         searchEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -73,8 +76,10 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    //Khởi tạo input_finish_checker kiểm tra người dùng dừng nhâp tin nhắn
     private Runnable input_finish_checker = new Runnable() {
         public void run() {
+            // Sau 0.5s người dùng dừng nhập tin nhắn thì gọi hàm GetData
             if (System.currentTimeMillis() > (last_text_edit + delay - 500)) {
                 String kw = searchEdt.getText().toString().trim();
                 GetData(kw);
@@ -82,6 +87,9 @@ public class SearchActivity extends AppCompatActivity {
         }
     };
 
+    // Tìm kiếm dựa vào số điện thoại người dùng nhập và hiển thị lên màn hình
+    // kw là số điện thoại người dùng nhập
+    // Nếu không tìm thấy thì hiện rỗng
     public void GetData(String kw) {
         if (kw.length() == PHONE_LENGTH) {
             progressBar.setVisibility(View.VISIBLE);
@@ -95,11 +103,13 @@ public class SearchActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
+                                    // Tạo contact và gán thông tin người dùng cho contact
                                     Contact contact = new Contact();
                                     contact.setPhone(document.getId());
                                     contact.setName(document.getString(Constants.KEY_Name));
                                     contact.setImage(document.getString(Constants.KEY_Image));
                                     contact.setActive(document.getBoolean(Constants.KEY_Active));
+                                    // Thêm contact vào contacts
                                     contacts.add(contact);
                                 }
                                 else {
@@ -122,6 +132,7 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    // Lắng nghe sự kiện cho backBtn
     private void SetListener() {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +142,7 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    // Khởi tạo giá trị cho biến
     private void Init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
         db = FirebaseFirestore.getInstance();
@@ -142,6 +154,7 @@ public class SearchActivity extends AppCompatActivity {
 
     }
 
+    // Ánh xạ
     private void Binding() {
         searchEdt = findViewById(R.id.search);
         progressBar = findViewById(R.id.progressBar);

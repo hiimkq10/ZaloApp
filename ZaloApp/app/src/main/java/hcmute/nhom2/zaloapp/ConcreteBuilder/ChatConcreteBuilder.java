@@ -5,6 +5,7 @@ import java.util.Date;
 import hcmute.nhom2.zaloapp.builder.ChatBuilder;
 import hcmute.nhom2.zaloapp.model.Chat;
 
+// Chat Builder giúp xây dựng đối tượng Class Chat
 public class ChatConcreteBuilder implements ChatBuilder {
     private String phone;
     private String name;
@@ -56,6 +57,7 @@ public class ChatConcreteBuilder implements ChatBuilder {
         return this;
     }
 
+    // Tạo đối tượng chat
     @Override
     public Chat build() {
         return new Chat(phone, name, active, image, latestChat, timestamp, read);

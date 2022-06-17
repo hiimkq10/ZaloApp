@@ -26,19 +26,25 @@ public class ReceiverInfoActivity extends AppCompatActivity {
         LoadReceiverInfo();
     }
 
+    // Load thông tin người nhận
     private void LoadReceiverInfo() {
         Intent intent = getIntent();
         Contact receiver = (Contact) intent.getSerializableExtra("receiver");
+
+        // Hiển thị tên người nhận
         receiverName.setText(receiver.getName());
 
+        // Tham chiếu đến ảnh người nhận trên firebase storage
         StorageReference storageReference = FirebaseStorage.getInstance().getReference()
                 .child(Constants.KEY_COLLECTION_USERS)
                 .child(Constants.KEY_STORAGE_FOLDER_UserImages)
                 .child(receiver.getImage());
 
+        // Hiển thị hình ảnh người nhận
         Glide.with(ReceiverInfoActivity.this).load(storageReference).into(receiverImage);
     }
 
+    // Ánh xạ
     private void Binding() {
         receiverImage = findViewById(R.id.receiverImage);
         receiverName = findViewById(R.id.receiverName);

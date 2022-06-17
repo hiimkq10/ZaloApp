@@ -31,6 +31,7 @@ import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ContactViewHolder> {
     protected final LinkedList<Contact> contacts;
     protected LayoutInflater mInflater;
+    // context: activity gọi adapter
     protected Context context;
     protected FirebaseFirestore db;
     protected FirebaseStorage firebaseStorage;
@@ -45,6 +46,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         this.preferenceManager = new PreferenceManager(context);
     }
 
+    // ContactViewHolder lưu thông tin ánh xạ
     class ContactViewHolder extends RecyclerView.ViewHolder {
         public final ImageView image, active;
         public final TextView name;
@@ -68,6 +70,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ContactListAdapter.ContactViewHolder holder, int position) {
+        // Hiển thị thông tin người dùng
         Contact mCurrent = this.contacts.get(position);
         holder.name.setText(mCurrent.getName());
         StorageReference storageReference = firebaseStorage.getReference()
@@ -80,6 +83,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 //            holder.active.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
         }
 
+        // Sự kiện click: khi click vào thì chuyển đến ChatActivity
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +91,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
                 intent.putExtra(Constants.KEY_User, mCurrent);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+                // Biến flag tương tự id room của người dùng, giúp tham chiếu đến room đó
                 final String flag;
                 if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(mCurrent.getPhone()) < 0) {
                     flag = preferenceManager.getString(Constants.KEY_PhoneNum) + "_" + mCurrent.getPhone();
@@ -95,6 +100,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
                     flag = mCurrent.getPhone() + "_" + preferenceManager.getString(Constants.KEY_PhoneNum);
                 }
 
+                // Cập nhật tráng thái người dùng thành đã đọc tin nhắn
                 db.collection(Constants.KEY_Rooms)
                         .whereEqualTo(flag, true)
                         .limit(1)

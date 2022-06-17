@@ -39,6 +39,7 @@ import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder>{
     private final LinkedList<Contact> contacts;
     private LayoutInflater mInflater;
+    // context: activity gọi adapter
     private Context context;
     private FirebaseFirestore db;
     private FirebaseStorage firebaseStorage;
@@ -53,6 +54,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         this.preferenceManager = new PreferenceManager(context);
     }
 
+    // SearchViewHolder lưu thông tin ánh xạ
     class SearchViewHolder extends RecyclerView.ViewHolder {
         public final ImageView image, active;
         public final TextView name;
@@ -79,6 +81,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
+        // Hiển thị thông tin người dùng được tìm kiếm
         Contact mCurrent = this.contacts.get(position);
         holder.name.setText(mCurrent.getName());
         StorageReference storageReference = firebaseStorage.getReference()
@@ -88,18 +91,27 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         Glide.with(holder.itemView.getContext()).load(storageReference).into(holder.image);
         holder.active.setVisibility(View.INVISIBLE);
 
+        // phoneNum số điện thoại người dùng
         String phoneNum = preferenceManager.getString(Constants.KEY_PhoneNum);
+
+        // friends danh sách bạn của người dùng
         Set<String> friends = preferenceManager.getStringSet(Constants.KEY_ListFriends);
 
+        // Nếu người dùng tự tìm số điện thoại của mình thì chỉ hiện tên, ảnh
         if (mCurrent.getPhone().equals(phoneNum)) {
             holder.sendRequestBtn.setVisibility(View.GONE);
         }
         else{
+            // Nếu người dùng được tìm kiếm có trong danh sách bạn bè thì hiển thị tên ảnh, nút Friend
             if (friends.contains(mCurrent.getPhone())) {
                 holder.sendRequestBtn.setVisibility(View.VISIBLE);
                 holder.sendRequestBtn.setText(context.getString(R.string.friend));
             }
             else {
+                // Trường hợp người dùng chưa kết bạn
+                // Nếu người dùng được tìm kiếm chưa gửi lời mời kết bạn thì hiển thị tên, ảnh, nút Add Friend
+                // Nếu người dùng được tìm kiếm đã gửi lời mời kết bạn thì hiển thị tên, ảnh, nút Accept
+                // Nếu người dùng đã gửi lời mời kết bạn cho người dùng được tìm kiếm thì hiển thị tên, ảnh, nút Request Sent
                 db.collection(Constants.KEY_COLLECTION_Notifications)
                         .whereEqualTo(Constants.KEY_From + "." + Constants.KEY_PhoneNum, phoneNum)
                         .whereEqualTo(Constants.KEY_To + "." + Constants.KEY_PhoneNum, mCurrent.getPhone())
@@ -137,6 +149,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             }
         }
 
+        // Sự kiện click vào sendRequestBtn
+        // Nếu sendRequestBtn đang hiển thị add friend thì gửi lời mời kết bạn cho người dùng được tìm kiếm, sendRequestBtn chuyển sang hiển thị Request sent
+        // Nếu sendRequestBtn đang hiển thị Request Sent thì xóa lời mời kết bạn, sendRequestBtn chuyển sang hiển thị add friend
+        // Nếu sendRequestBtn đang hiển thị Accept thì thêm người dùng vào danh sách bạn, sendRequestBtn chuyển sang hiển thị Friend
         holder.sendRequestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,15 +202,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                             });
                 }
                 else if (holder.sendRequestBtn.getText().toString().equals(context.getString(R.string.accept_request))){
+                    // tham chiếu đến document thông báo của người gửi
                     DocumentReference senderRef = db.collection(Constants.KEY_COLLECTION_USERS)
                             .document(mCurrent.getPhone());
+                    // tham chiếu đến document thông báo của người nhận
                     DocumentReference receiverRef = db.collection(Constants.KEY_COLLECTION_USERS)
                             .document(phoneNum);
+
+                    // Cập nhật danh sách bạn
                     db.runTransaction(new Transaction.Function<Void>() {
                         @Nullable
                         @Override
                         public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                            // Thêm người nhận vào danh sách bạn của người gửi
                             transaction.update(senderRef, Constants.KEY_ListFriends, FieldValue.arrayUnion(phoneNum));
+                            // Thêm người gửi vào danh sách bạn của người nhận
                             transaction.update(receiverRef, Constants.KEY_ListFriends, FieldValue.arrayUnion(mCurrent.getPhone()));
                             return null;
                         }
@@ -209,6 +231,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                             if (task.isSuccessful()) {
+                                                // Xóa lời mời kết bạn
                                                 QuerySnapshot querySnapshot = task.getResult();
                                                 DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
                                                 documentSnapshot.getReference().delete();

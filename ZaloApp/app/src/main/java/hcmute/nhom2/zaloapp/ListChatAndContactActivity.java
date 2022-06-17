@@ -54,7 +54,10 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_chat_and_contact);
 
+        // Khởi tạo firestore db
         db = FirebaseFirestore.getInstance();
+
+        // Khởi tạo preferenceManager
         preferenceManager = new PreferenceManager(ListChatAndContactActivity.this);
 //        preferenceManager.putString(Constants.KEY_Image, "avatar.png");
 //        preferenceManager.putString(Constants.KEY_PhoneNum, "0123456789");
@@ -63,12 +66,14 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
 //        preferenceManager.putString(Constants.KEY_Name, "Thanh Hai");
 
         myToolBar = findViewById(R.id.my_toolbar);
+        // Tạo action bar từ toolbar trong layout
         SetUpToolBar();
 
         myToolBarTitle = findViewById(R.id.toolbarTitle);
         progressBar = findViewById(R.id.progressBar);
         fragmentContainerView = findViewById(R.id.fragment_container);
 
+        // Hiện thị ListChatFragment trong fragmentContainerView
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, ListChatFragment.class, null)
@@ -76,28 +81,36 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
                 .commit();
 
         bottomNavigationView = findViewById(R.id.my_bottom_navigation);
+        // Cài đặt Bottom Navigation
         SetUpBottomNavigation();
 
+        // Tham chiếu đến ảnh người dùng trên firebase storage
         StorageReference storageReference = FirebaseStorage.getInstance().getReference()
                 .child(Constants.KEY_COLLECTION_USERS)
                 .child(Constants.KEY_STORAGE_FOLDER_UserImages)
                 .child(preferenceManager.getString(Constants.KEY_Image));
         tbUserImage = findViewById(R.id.tb_user_image);
 
+        // Hiển thị ảnh người dùng
         GlideApp.with(ListChatAndContactActivity.this)
                 .load(storageReference)
                 .into(tbUserImage);
 
+        // Lắng nghe sự kiện
         SetListener();
 
     }
 
+    // Tạo action bar từ toolbar trong layout
     public void SetUpToolBar() {
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
+    // Cài đặt Bottom Navigation
     public void SetUpBottomNavigation() {
+        // Cài đặt sự kiện click cho các menu item của bottom navigation
+        // Tùy vào id của item menu mà hiển thị fragment tương ứng
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -152,6 +165,7 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         });
     }
 
+    // Lắng nghe sự kiện
     private void SetListener() {
         tbUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,13 +175,17 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
             }
         });
 
+        // Gán event lắng nghe khi người dùng có thông báo mới
         db.collection(Constants.KEY_COLLECTION_Notifications)
                 .whereEqualTo(Constants.KEY_To + "." + Constants.KEY_PhoneNum, preferenceManager.getString(Constants.KEY_PhoneNum))
                 .addSnapshotListener(eventListener);
     }
 
+    // Lấy số lượng thông báo người dùng chưa đọc
     private int getBadgesNumber() {
+        // Khởi tạo itemView tham chiếu đến item menu notification trong Bottom Navigation
         BottomNavigationItemView itemView = (BottomNavigationItemView) bottomNavigationView.getChildAt(3);
+        // Tham chiếu đên badge của item menu notification
         BadgeDrawable badge =  bottomNavigationView.getOrCreateBadge(R.id.menu_notification);
         if (badge.isVisible()) {
             return badge.getNumber();
@@ -175,9 +193,13 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         return 0;
     }
 
+    // Gán số lượng thông báo người dùng chưa đọc
     private void setBadgesNumber(int num) {
+        // Khởi tạo itemView tham chiếu đến item menu notification trong Bottom Navigation
         BottomNavigationItemView itemView = (BottomNavigationItemView) bottomNavigationView.getChildAt(3);
+        // Tham chiếu đên badge của item menu notification
         BadgeDrawable badge =  bottomNavigationView.getOrCreateBadge(R.id.menu_notification);
+        // Gán giá trị của badge bằng num
         if (num == 0) {
             badge.setVisible(false);
         }
@@ -189,6 +211,7 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         badge.setNumber(num);
     }
 
+    // Tạo event lắng nghe khi người dùng có thông báo mới và hiển thị số lượng thông báo chưa đọc
     private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
         if (error != null) {
             return;
@@ -228,6 +251,8 @@ public class ListChatAndContactActivity extends BaseActivity implements Loading{
         return true;
     }
 
+    // Kiểm tra xem các fragment đã load hết nội dung hay chưa
+    // Nếu rồi thì ẩn progressbar và hiện fragment container
     @Override
     public void loading(Boolean isLoading) {
         if (!isLoading) {
