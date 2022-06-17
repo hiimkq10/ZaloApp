@@ -2,7 +2,7 @@ package hcmute.nhom2.zaloapp.model;
 
 public class Notification {
     private String id;
-    private String Type;
+    private String Type; // Loại thông báo, hiện chỉ có 1 loại là thông báo kết bạn
 
     public Notification() {
     }

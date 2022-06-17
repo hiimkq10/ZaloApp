@@ -2,10 +2,11 @@ package hcmute.nhom2.zaloapp.model;
 
 import java.util.Date;
 
+// Lưu thông tin tên, ảnh người nhận, tin nhắn cuối cùng người dùng chat
 public class Chat extends Contact {
-    private String latestChat;
-    private Date timestamp;
-    private Boolean read;
+    private String latestChat; // tin nhắn cuối
+    private Date timestamp; // thời gian nhắn
+    private Boolean read; // Đã đọc hay chưa
 
     public Chat() {
     }

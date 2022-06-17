@@ -49,6 +49,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.layoutManager = layoutManager;
     }
 
+    // ReceivedMessageViewHolder lưu thông tin ánh xạ cho tin nhắn người dùng nhận được
     class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
         public final TextView textMessage, textTimeStamp;
         public final ImageView imageMessage;
@@ -65,6 +66,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    // SentMessageViewHolder lưu thông tin ánh xạ cho tin nhắn người dùng gửi đi
     class SentMessageViewHolder extends RecyclerView.ViewHolder {
         public final TextView textMessage, textTimeStamp;
         public final ImageView imageMessage;
@@ -82,6 +84,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Kiểm tra loại tin nhắn là gửi đi hay nhận được
         if (viewType == VIEW_TYPE_SENT) {
             return new SentMessageViewHolder(this.inflater
                     .inflate(R.layout.sent_message, parent, false), this);
@@ -94,6 +97,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        // Hiển thị thông tin message theo loại message
         ChatMessage mCurrent = messages.get(position);
         if (getItemViewType(position) == VIEW_TYPE_SENT) {
             ((SentMessageViewHolder) holder).textMessage.requestLayout();
@@ -120,6 +124,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
             }
+
+            // Sự kiện click: khi click vào message thì hiển thị ngày nhắn
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -164,6 +170,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
             }
+
+            // Sự kiện click: khi click vào message thì hiển thị ngày nhắn
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -184,6 +192,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return messages.size();
     }
 
+    // Phân loại view
+    // Có 2 loại: SENT và RECEIVED
+    // SENT: tin nhắn do người dùng gửi
+    // RECEIVED: tin nhắn người dùng nhận được
     @Override
     public int getItemViewType(int position) {
         if (messages.get(position).getSenderPhoneNum().equals(this.senderPhoneNum)) {
@@ -194,13 +206,17 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    // Hàm giúp sữa lỗi recycler view tự scrool
     private void avoidAutoScroll(){
+        // bottomItem phần tử cuối recycler view đang hiển thị
         View bottomItem = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
         int bottomItemPos = layoutManager.getPosition(bottomItem);
         int bottomOffset = layoutManager.getDecoratedTop(bottomItem);
+        // scrool đến vị trí bottomItem
         ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(bottomItemPos, bottomOffset);
     }
 
+    // Format ngày theo định dạng mong muốn
     private String getReadableDateTime(Date date) {
         return new SimpleDateFormat("MMMM dd yyyy -- hh:mm", Locale.getDefault()).format(date);
     }

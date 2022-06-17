@@ -1,8 +1,8 @@
 package hcmute.nhom2.zaloapp.model;
 
 public class FriendRequest extends Notification{
-    private Contact sender;
-    private Contact receiver;
+    private Contact sender; // Người gửi
+    private Contact receiver; // Người nhận
 
     public FriendRequest() {
     }

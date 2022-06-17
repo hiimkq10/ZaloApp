@@ -4,6 +4,7 @@ import java.util.Date;
 
 import hcmute.nhom2.zaloapp.model.Chat;
 
+// Chat Builder giúp xây dựng đối tượng Class Chat
 public interface ChatBuilder {
 
     ChatBuilder setPhone(String phone);
@@ -13,5 +14,5 @@ public interface ChatBuilder {
     ChatBuilder setLatestChat(String latestChat);
     ChatBuilder setTimestamp(Date timestamp);
     ChatBuilder setRead(Boolean read);
-    Chat build();
+    Chat build(); // Tạo đối tượng chat
 }

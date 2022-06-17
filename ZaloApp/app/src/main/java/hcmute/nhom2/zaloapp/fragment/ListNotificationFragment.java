@@ -35,29 +35,40 @@ public class ListNotificationFragment extends Fragment {
     private FirebaseFirestore db;
     private PreferenceManager preferenceManager;
     private View view;
+    // Biến loading kiểm tra tình trạng load dữ liệu đã hoàn thành chưa
     private Loading loading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_list_notification, container, false);
+
+        // Khởi tạo loading là ListChatAndContactActivity
         this.loading = (Loading) getActivity();
+
         preferenceManager = new PreferenceManager(getContext());
         db = FirebaseFirestore.getInstance();
+
+        // Load Notification từ Firestore
         GetDataFromFireStore();
         // Inflate the layout for this fragment
         return view;
     }
 
+    // Load Notification từ Firestore
+    // Hiện tại chỉ xét đến các thông báo thuộc loại lời mời kết bạn
     public void GetDataFromFireStore() {
+        // colRef tham chiếm đến collection notifications trên Firestore
         CollectionReference colRef = db.collection(Constants.KEY_COLLECTION_Notifications);
 
+        // Lấy về các thông báo của người dùng
         colRef.whereEqualTo(Constants.KEY_To + "." + Constants.KEY_PhoneNum, preferenceManager.getString(Constants.KEY_PhoneNum))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            // notifications: danh sách thông báo
                             LinkedList<Notification> notifications = new LinkedList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 document.getReference().update(Constants.KEY_Read, true);
@@ -80,6 +91,7 @@ public class ListNotificationFragment extends Fragment {
                                     notifications.add(notification);
                                 }
                             }
+                            // Khởi tạo recyclerView, adapter, layout manager và hiển thị danh sách thông báo
                             RecyclerView recyclerView = view.findViewById(R.id.recyclerviewNotifications);
                             NotificationAdapter adapter = new NotificationAdapter(getContext(), notifications);
                             recyclerView.setAdapter(adapter);

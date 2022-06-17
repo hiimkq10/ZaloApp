@@ -40,6 +40,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     private LayoutInflater mInflater;
     private FirebaseFirestore db;
     private FirebaseStorage firebaseStorage;
+    // context: activity gọi adapter
     private Context context;
     private PreferenceManager preferenceManager;
 
@@ -52,6 +53,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         this.preferenceManager = new PreferenceManager(context);
     }
 
+    // ChatViewHolder lưu thông tin ánh xạ
     class ChatViewHolder extends RecyclerView.ViewHolder {
         public final TextView name, message, timestamp;
         public final ImageView image, active;
@@ -77,6 +79,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
+        // Hiển thị thông tin chat
         Chat mCurrent = this.chats.get(position);
         holder.name.setText(mCurrent.getName());
         holder.message.setText(mCurrent.getLatestChat());
@@ -111,11 +114,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             holder.active.setVisibility(View.VISIBLE);
         }
 
+        // Sự kiện click: khi click vào thì chuyển đến ChatActivity
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra(Constants.KEY_User, mCurrent);
+
+                // Biến flag tương tự id room của người dùng, giúp tham chiếu đến room đó
                 final String flag;
                 if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(mCurrent.getPhone()) < 0) {
                     flag = preferenceManager.getString(Constants.KEY_PhoneNum) + "_" + mCurrent.getPhone();
@@ -124,6 +130,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                     flag = mCurrent.getPhone() + "_" + preferenceManager.getString(Constants.KEY_PhoneNum);
                 }
 
+                // Cập nhật tráng thái người dùng thành đã đọc tin nhắn
                 db.collection(Constants.KEY_Rooms)
                         .whereEqualTo(flag, true)
                         .limit(1)
@@ -153,14 +160,22 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         return chats.size();
     }
 
+    // Format lại ngày tháng theo định dạng mong muốn
     private String getReadableDateTime(Date date) {
+        // now ngày hiện tại
         Date now = new Date();
         SimpleDateFormat simpleDateFormat;
+
+        // Số giây cách biệt giữa ngày hiện tại và ngày gửi
         long different = Utils.getDateDiffInSecond(date, now);
 
+        // Đổi từ giây sang ngày
         long daysInSecond = 60 * 60 * 24;
         long elapsedDays = different / daysInSecond;
 
+        // Nếu cách biệt giữa ngày hiện tại và ngày gửi lớn hơn 5 thì chọn định dạng MMM d (tháng ngày)
+        // Nếu cách biệt giữa ngày hiện tại và ngày gửi lớn hơn bằng 1 thì chọn định dạng E (thứ)
+        // Nếu cách biệt giữa ngày hiện tại và ngày gửi nhỏ hơn 1 thì chọn định dạng hh:mm (giờ phút)
         if (elapsedDays > 5) {
             simpleDateFormat = new SimpleDateFormat("MMM d", Locale.getDefault());
         }

@@ -37,6 +37,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private LayoutInflater inflater;
     private FirebaseStorage firebaseStorage;
     private FirebaseFirestore db;
+    // context: activity gọi adapter
     private Context context;
 
     public static final int VIEW_TYPE_FRIEND_REQUEST = 1;
@@ -56,6 +57,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
     }
 
+    // FriendRequestViewHolder lưu thông tin ánh xạ cho lời mời kết bạn
     class FriendRequestViewHolder extends NotificationViewHolder {
         public final ImageView senderImage;
         public final TextView senderName;
@@ -81,6 +83,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull NotificationAdapter.NotificationViewHolder holder, int position) {
+        // Hiển thị thông tin thông báo
         Notification mCurrent = notifications.get(position);
         if (getItemViewType(position) == VIEW_TYPE_FRIEND_REQUEST) {
             FriendRequest friendRequest = (FriendRequest) mCurrent;
@@ -92,24 +95,33 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     .child(friendRequest.getSender().getImage());
             Glide.with(context).load(storageReference).into(friendRequestViewHolder.senderImage);
 
+            // Sự kiện click xác nhận kết bạn
             friendRequestViewHolder.confirmBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // tham chiếu đến document thông báo của người gửi
                     DocumentReference senderRef = db.collection(Constants.KEY_COLLECTION_USERS)
                             .document(friendRequest.getSender().getPhone());
+
+                    // tham chiếu đến document thông báo của người nhận
                     DocumentReference receiverRef = db.collection(Constants.KEY_COLLECTION_USERS)
                             .document(friendRequest.getReceiver().getPhone());
+
+                    // Cập nhật danh sách bạn
                     db.runTransaction(new Transaction.Function<Void>() {
                         @Nullable
                         @Override
                         public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                            // Thêm người nhận vào danh sách bạn của người gửi
                             transaction.update(senderRef, Constants.KEY_ListFriends, FieldValue.arrayUnion(friendRequest.getReceiver().getPhone()));
+                            // Thêm người gửi vào danh sách bạn của người nhận
                             transaction.update(receiverRef, Constants.KEY_ListFriends, FieldValue.arrayUnion(friendRequest.getSender().getPhone()));
                             return null;
                         }
                     }).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            // Xóa lời mời kết bạn
                             db.collection(Constants.KEY_COLLECTION_Notifications).document(friendRequest.getId()).delete();
                             removeElement(mCurrent);
                         }
@@ -117,6 +129,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 }
             });
 
+            // Sự kiện click xóa lời mời kết bạn
             friendRequestViewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -127,11 +140,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
     }
 
+    // Xóa thông báo khỏi danh sách thông báo (notifications)
     public void removeElement(Notification notification) {
         notifications.remove(notification);
         notifyDataSetChanged();
     }
 
+    //Phân loại thông báo
+    // Hiện chỉ có một loại là lời mởi kết bạn
     @Override
     public int getItemViewType(int position) {
         if (notifications.get(position).getType().equals(Constants.KEY_NOTIFICATION_TYPE_FriendRequest)) {

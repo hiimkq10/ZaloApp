@@ -57,12 +57,12 @@ import hcmute.nhom2.zaloapp.utilities.Constants;
 import hcmute.nhom2.zaloapp.utilities.PreferenceManager;
 
 public class ChatActivity extends BaseActivity {
-
     private Contact receiver;
     private ShapeableImageView receiverImage;
     private TextView receiverName;
     private ImageButton btnBack, btnInfo, btnSend, btnImage;
     private EditText inputMessage;
+    // ProgressBar sẽ xuất hiện khi tin nhắn đang được load.
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private LinkedList<ChatMessage> messages;
@@ -70,6 +70,7 @@ public class ChatActivity extends BaseActivity {
     private PreferenceManager preferenceManager;
     private FirebaseFirestore db;
     private View rootView;
+    // Biến scrooledToBottom giúp nhận biết recyclerview đã từng được scrool đến đáy hay chưa.
     private Boolean scrooledToBottom = false;
 
     ActivityResultLauncher<String> takePhoto;
@@ -80,18 +81,24 @@ public class ChatActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Binding();
-        LoadReceiverDetails();
-        SetListeners();
-        Init();
-        ListenMessages();
+        Binding();// Ánh xạ
+        LoadReceiverDetails();// Load thông tin người nhận tin nhắn và hiển thị tên, hình ảnh
+        SetListeners();// Khởi tạo sự kiện button, rootView
+        Init();// Khởi tạo các biến
+        ListenMessages();// Gắn event lắng nghe tin nhắn mới cho Room của người dùng.
 
         SelectImage();// Chọn hình ảnh gửi
     }
 
+    // Khởi tạo các biến
     private void Init() {
+        // Khởi tạo mảng tin nhắn
         this.messages = new LinkedList<>();
+
+        // Khởi tạo preferenceManager
         this.preferenceManager = new PreferenceManager(getApplicationContext());
+
+        // Khởi tạo linearLayoutManager, adapter, gán layout manager và adapter cho recyclerview
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         linearLayoutManager.setStackFromEnd(true);
@@ -102,10 +109,14 @@ public class ChatActivity extends BaseActivity {
                 receiver.getImage());
         this.recyclerView.setLayoutManager(linearLayoutManager);
         this.recyclerView.setAdapter(this.adapter);
+
+        // Khởi tạo Firebase Firestore
         db = FirebaseFirestore.getInstance();
     }
 
+    // Gán event lắng nghe tin nhắn mới cho Room của người dùng.
     private void ListenMessages() {
+        // Biến flag tương tự id room của người dùng, giúp tham chiếu đến room đó
         final String flag;
         if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(this.receiver.getPhone()) < 0) {
             flag = preferenceManager.getString(Constants.KEY_PhoneNum) + "_" + this.receiver.getPhone();
@@ -133,6 +144,7 @@ public class ChatActivity extends BaseActivity {
                 });
     }
 
+    // Event lắng nghe xem nếu có tin nhắn mới gửi đến người dùng thì hiển thị tin nhắn đó
     private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
         if (error != null) {
             return;
@@ -141,6 +153,7 @@ public class ChatActivity extends BaseActivity {
             int count = this.messages.size();
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                    // Khởi tạo tin nhắn và gán nội dung cho tin nhắn từ document
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.setSenderPhoneNum(documentChange.getDocument().getString(Constants.KEY_SenderPhoneNum));
                     chatMessage.setType(documentChange.getDocument().getString(Constants.KEY_Type));
@@ -149,6 +162,7 @@ public class ChatActivity extends BaseActivity {
                     this.messages.addLast(chatMessage);
                 }
             }
+            // Sắp xếp mảng tin nhắn theo thời gian nhắn và hiển thị
             Collections.sort(messages, (obj1, obj2) -> obj1.getTimestamp().compareTo(obj2.getTimestamp()));
             if (count == 0) {
                 this.adapter.notifyDataSetChanged();
@@ -162,13 +176,16 @@ public class ChatActivity extends BaseActivity {
         this.progressBar.setVisibility(View.GONE);
     });
 
+    // Gửi tin nhắn
     private void SendMessage() {
+        // Lấy dữ liệu từ inputMessage và gắn vào Map message
         HashMap<String, Object> message = new HashMap<>();
         message.put(Constants.KEY_SenderPhoneNum, preferenceManager.getString(Constants.KEY_PhoneNum));
         message.put(Constants.KEY_Type, "Text");
         message.put(Constants.KEY_Content, inputMessage.getText().toString());
         message.put(Constants.KEY_Timestamp, new Date());
 
+        // Biến flag tương tự id room của người dùng, giúp tham chiếu đến room đó
         final String flag;
         if (preferenceManager.getString(Constants.KEY_PhoneNum).compareTo(this.receiver.getPhone()) < 0) {
             flag = preferenceManager.getString(Constants.KEY_PhoneNum) + "_" + this.receiver.getPhone();
@@ -185,6 +202,7 @@ public class ChatActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            // Nếu room tồn tại thì gửi tin nhắn lên room, nếu không thì tạo room rồi gửi tin nhắn
                             if (task.getResult().size() > 0) {
                                 for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                     String id = documentSnapshot.getId();
@@ -258,7 +276,7 @@ public class ChatActivity extends BaseActivity {
 
     }
 
-
+    // Ánh xạ
     private void Binding() {
         receiverImage = findViewById(R.id.receiverImage);
         receiverName = findViewById(R.id.receiverName);
@@ -272,19 +290,27 @@ public class ChatActivity extends BaseActivity {
         rootView = findViewById(R.id.rootView);
     }
 
+    // Load thông tin người nhận tin nhắn và hiển thị tên, hình ảnh
     private void LoadReceiverDetails() {
+        // Lấy thông tin người nhận từ intent
         receiver = (Contact) getIntent().getSerializableExtra(Constants.KEY_User);
+
+        // Hiển thị tên
         receiverName.setText(receiver.getName());
 
+        // Tạo tham chiếu đến ảnh người nhận trên Firebase storage
         StorageReference storageReference = FirebaseStorage.getInstance().getReference()
                 .child(Constants.KEY_COLLECTION_USERS)
                 .child(Constants.KEY_STORAGE_FOLDER_UserImages)
                 .child(receiver.getImage());
 
+        // Hiển thị ảnh
         Glide.with(ChatActivity.this).load(storageReference).into(receiverImage);
     }
 
+    // Khởi tạo sự kiện button, rootView
     private void SetListeners() {
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -296,6 +322,7 @@ public class ChatActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if (!inputMessage.getText().toString().trim().equals("")) {
+                    // Gửi tin nhắn
                     SendMessage();
                     inputMessage.setText(null);
                 }
@@ -311,6 +338,11 @@ public class ChatActivity extends BaseActivity {
             }
         });
 
+        // Fix lỗi RecyclerView không scrool đến button khi soft keyboard xuất hiện
+        // rootView sẽ liên tục kiểm tra độ cao rootView hiện tại để xác định soft keyboard có xuất hiện trên màn hình không
+        // khi soft keyboard hiện lên, nếu scrooledToBottom là false,
+        // làm recyclerView scrool đến bottom và gán scrooledToBottom là true
+        // Khi soft keyboard biến mất, gán scrooledToBottom là false
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

@@ -25,17 +25,29 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Tạo preferenceManager tham chiếu đến SharedPreferences
         preferenceManager = new PreferenceManager(getApplicationContext());
+
+        //Khởi tạo Firebase
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        //Tạo tham chiếu đến document thông tin cá nhân của người dùng hiện tại
         userDocumentReference = db.collection(Constants.KEY_COLLECTION_USERS)
                 .document(preferenceManager.getString(Constants.KEY_PhoneNum));
+
+        //Tạo tham chiếu đến collection Room
         roomCollectionReference = db.collection(Constants.KEY_Rooms);
     }
 
+    // Cập nhật trạng thái hoạt đông là false khi activity không còn được focus
     @Override
     protected void onPause() {
         super.onPause();
+        // Cập nhật active ở document user là false
         userDocumentReference.update(Constants.KEY_Active, false);
+
+        // Cập nhật active ở collection room là false
         roomCollectionReference.orderBy(Constants.KEY_COLLECTION_USERS + "." + preferenceManager.getString(Constants.KEY_PhoneNum))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -53,10 +65,15 @@ public class BaseActivity extends AppCompatActivity {
                 });
     }
 
+    // Cập nhật trạng thái hoạt đông là true khi activity được focus trở lại
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Cập nhật active ở document user là true
         userDocumentReference.update(Constants.KEY_Active, true);
+
+        // Cập nhật active ở collection room là true
         roomCollectionReference.orderBy(Constants.KEY_COLLECTION_USERS + "." + preferenceManager.getString(Constants.KEY_PhoneNum))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

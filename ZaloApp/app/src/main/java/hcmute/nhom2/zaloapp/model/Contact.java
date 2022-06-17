@@ -3,11 +3,12 @@ package hcmute.nhom2.zaloapp.model;
 import java.io.Serializable;
 import java.util.Date;
 
+// Lưu thông tin người dùng
 public class Contact implements Serializable {
-    private String phone;
-    private String name;
-    private boolean active;
-    private String image;
+    private String phone; // Số điện thoại
+    private String name; // Tên
+    private boolean active; // Trạng thái hoạt động
+    private String image; // Hình ảnh
 
     public Contact() {
 

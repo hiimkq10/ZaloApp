@@ -2,11 +2,12 @@ package hcmute.nhom2.zaloapp.model;
 
 import java.util.Date;
 
+// Tin nhắn
 public class ChatMessage {
-    private String senderPhoneNum;
-    private String type;
-    private String content;
-    private Date timestamp;
+    private String senderPhoneNum; // Số điện thoại người gửi
+    private String type; // Loại tin nhắn, có 2 loại text, image
+    private String content; // Nội dung tin nhắn
+    private Date timestamp; // Thời gian gửi
 
     public ChatMessage() {
     }
